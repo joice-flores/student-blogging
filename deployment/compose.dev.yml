@@ -1,0 +1,49 @@
+services:
+  sb_api_dev:
+    build:
+      context: ../
+      dockerfile: deployment/docker/Dockerfile.dev
+    container_name: student-blogging-api-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - MONGODB_URI=${MONGODB_URI}
+      - PORT=${PORT}
+    env_file:
+      - ../.env
+    volumes:
+      - ../:/app
+    depends_on:
+      sb_mongodb_dev:
+        condition: service_healthy
+    networks:
+      - student-blogging-dev-network
+    restart: unless-stopped
+
+  sb_mongodb_dev:
+    image: mongo:7.0-jammy
+    container_name: student-blogging-mongodb-dev
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - student-blogging-dev-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+
+networks:
+  student-blogging-dev-network:
+    driver: bridge

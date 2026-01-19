@@ -1,0 +1,71 @@
+{
+  "name": "student-blogging",
+  "version": "1.0.0",
+  "description": "Api student blogging",
+  "main": "dist/main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "docker:dev": "cd deployment && docker compose --env-file ../.env -f compose.dev.yml up -d",
+    "docker:devBuild": "cd deployment && docker compose --env-file ../.env -f compose.dev.yml build --no-cache && docker compose --env-file ../.env -f compose.dev.yml up -d",
+    "docker:devDependencies": "cd deployment && docker compose --env-file ../.env -f compose.dev.yml run --rm sb_api_dev npm install",
+    "docker:prod": "cd deployment && docker compose up -d",
+    "docker:build": "cd deployment && docker compose build",
+    "docker:restart": "cd deployment && docker compose restart",
+    "docker:stop": "cd deployment && docker compose stop",
+    "docker:down": "cd deployment && docker compose down",
+    "docker:logs": "cd deployment && docker compose logs -f sb_api"
+  },
+  "dependencies": {
+    "fastify": "^4.25.2",
+    "@fastify/cors": "^8.5.0",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^2.1.0",
+    "mongodb": "^6.3.0",
+    "zod": "^3.22.4",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/jest": "^29.5.11",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=24.12.0",
+    "npm": ">=11.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roma-mb/student-blogging.git"
+  },
+  "author": "roma-mb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/roma-mb/student-blogging/issues"
+  },
+  "homepage": "https://github.com/roma-mb/student-blogging#readme"
+}
