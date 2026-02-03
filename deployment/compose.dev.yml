@@ -19,7 +19,6 @@ services:
         condition: service_healthy
     networks:
       - student-blogging-dev-network
-    restart: unless-stopped
 
   sb_mongodb_dev:
     image: mongo:7.0-jammy
