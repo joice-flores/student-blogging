@@ -4,7 +4,7 @@ import { connectDatabase } from '@infrastructure/database/mongodb/connection';
 import { env } from '@shared/env';
 
 async function bootstrap() {
-  await connectDatabase(env.MONGODB_URI || 'mongodb://localhost:27017/blog');
+  await connectDatabase(env.MONGODB_URI);
 
   const server = createServer();
   const port = env.PORT || 3000;

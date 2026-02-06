@@ -1,7 +1,11 @@
 export const environment = {
   mongodb: {
     errors: {
-      mongoUri: 'MONGODB_URI must be a valid URL'
+      mongoUri: 'MONGODB_URI must be a valid URL',
+      connected: 'Database not connected'
+    },
+    success: {
+      connected: 'MongoDB connected successfully'
     }
   },
   grafana: {

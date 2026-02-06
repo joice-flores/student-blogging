@@ -1,4 +1,4 @@
-import i18n from './i18n.config';
+import i18n from '@shared/i18n/i18n.config';
 
 const DEFAULT_LANGUAGE = 'en-US';
 type Lang = 'en-US';

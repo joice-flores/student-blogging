@@ -1,7 +1,11 @@
 export const ENVIRONMENT = {
   MONGODB: {
     ERRORS: {
-      URI: 'environment.mongodb.errors.mongoUri'
+      URI: 'environment.mongodb.errors.mongoUri',
+      CONNECTED: 'environment.mongodb.errors.connected'
+    },
+    SUCCESS: {
+      CONNECTED: 'environment.mongodb.success.connected'
     }
   },
   GRAFANA: {
