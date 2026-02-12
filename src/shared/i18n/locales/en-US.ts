@@ -14,7 +14,8 @@ export const enUS = {
       titleRequired: 'Title is required',
       contentRequired: 'Content is required',
       authorRequired: 'Author is required',
-      searchQueryRequired: 'Search query parameter is required'
+      searchQueryRequired: 'Search query parameter is required',
+      validation: 'Data validation error'
     },
     success: {
       created: 'Post created successfully',

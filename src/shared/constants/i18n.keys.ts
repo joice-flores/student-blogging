@@ -37,7 +37,8 @@ export const POSTS = {
     TITLE_REQUIRED: 'posts.errors.titleRequired',
     CONTENT_REQUIRED: 'posts.errors.contentRequired',
     AUTHOR_REQUIRED: 'posts.errors.authorRequired',
-    SEARCH_QUERY_REQUIRED: 'posts.errors.searchQueryRequired'
+    SEARCH_QUERY_REQUIRED: 'posts.errors.searchQueryRequired',
+    VALIDATION: 'posts.errors.validation'
   },
   SUCCESS: {
     CREATED: 'posts.success.created',

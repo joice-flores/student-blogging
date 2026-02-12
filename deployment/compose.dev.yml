@@ -1,46 +1,49 @@
 services:
-  sb_api_dev:
+  api:
     build:
       context: ../
       dockerfile: deployment/docker/Dockerfile.dev
-    container_name: student-blogging-api-dev
     ports:
       - '3000:3000'
+      - '9229:9229'
     environment:
       - NODE_ENV=${NODE_ENV}
       - MONGODB_URI=${MONGODB_URI}
       - PORT=${PORT}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+      - CHOKIDAR_INTERVAL=${CHOKIDAR_INTERVAL}
     env_file:
       - ../.env
     volumes:
-      - ../:/app
+      - ../src:/app/src
+      - ../package.json:/app/package.json
+      - /app/node_modules
     depends_on:
-      sb_mongodb_dev:
+      mongodb:
         condition: service_healthy
     networks:
       - student-blogging-dev-network
 
-  sb_mongodb_dev:
+  mongodb:
     image: mongo:7.0-jammy
-    container_name: student-blogging-mongodb-dev
     ports:
       - '27017:27017'
     environment:
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     volumes:
-      - mongodb_dev_data:/data/db
+      - mongodb-dev-data:/data/db
     networks:
       - student-blogging-dev-network
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 40s
+      interval: 20s
+      timeout: 20s
+      retries: 20
+      start_period: 50s
 
 volumes:
-  mongodb_dev_data:
+  mongodb-dev-data:
     driver: local
 
 networks:

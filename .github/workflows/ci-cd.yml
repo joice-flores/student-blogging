@@ -4,11 +4,24 @@ on:
   push:
     branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_DATABASE: student-blogging
+        options: >-
+          --health-cmd mongosh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
     
     steps:
     - uses: actions/checkout@v3
@@ -16,7 +29,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '24'
+        node-version: '24.12.0'
         cache: 'npm'
     
     - name: Install dependencies
@@ -25,8 +38,14 @@ jobs:
     - name: Run linter
       run: npm run lint
     
+    - name: Build project
+      run: npm run build
+    
     - name: Run tests
       run: npm test -- --coverage
+      env:
+        MONGODB_URI: mongodb://localhost:27017/student-blogging
+        NODE_ENV: test
     
     - name: Check coverage threshold
       run: |
@@ -36,22 +55,23 @@ jobs:
           exit 1
         fi
         echo "Coverage: $COVERAGE%"
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
 
-  build:
+  build-docker:
     needs: test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
     - uses: actions/checkout@v3
     
     - name: Build Docker image
       run: |
-        cd deployment
-        docker build -f docker/Dockerfile -t student-blogging:latest ../..
-    
-    - name: Test Docker image
-      run: |
-        docker run -d --name test-api -p 3000:3000 student-blogging:latest
-        sleep 10
-        docker logs test-api
+        docker build -f deployment/docker/Dockerfile -t student-blogging:latest .
         docker stop test-api
