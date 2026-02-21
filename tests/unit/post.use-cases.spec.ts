@@ -1,4 +1,4 @@
-import { createPost, listPosts, getPostById, updatePost, deletePost } from '@application/use-cases/post.use-cases';
+import { createPost, listPosts, getPostById, updatePost, deletePost } from '@application/use-cases/post';
 import { getDatabase } from '@infrastructure/database/mongodb/connection';
 
 jest.mock('@infrastructure/database/mongodb/connection');

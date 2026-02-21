@@ -1,8 +1,9 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { postRoutes } from '@infrastructure/http/routes/post.routes';
+import { errorHandler } from './middlewares/error-handler';
 
-export function createServer() {
+function createServer() {
   const app = fastify({ logger: true });
 
   app.register(cors);
@@ -10,5 +11,9 @@ export function createServer() {
 
   app.get('/health', async () => ({ status: 'ok' }));
 
+  app.setErrorHandler(errorHandler);
+
   return app;
 }
+
+export { createServer };

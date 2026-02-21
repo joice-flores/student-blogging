@@ -6,7 +6,13 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.config.js', 'jest.config.js']
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'coverage/',
+      '*.config.js',
+      'jest.config.js'
+    ]
   },
   {
     files: ['**/*.ts'],
@@ -32,7 +38,7 @@ export default [
       'prettier/prettier': [
         'error',
         {
-          printWidth: 100,
+          printWidth: 80,
           tabWidth: 2,
           singleQuote: true,
           trailingComma: 'none',
@@ -41,10 +47,25 @@ export default [
           endOfLine: 'auto'
         }
       ],
+      'multiline-ternary': ['error', 'always-multiline'],
+      'operator-linebreak': [
+        'error',
+        'before',
+        {
+          overrides: {
+            '=': 'after',
+            '?': 'before',
+            ':': 'before'
+          }
+        }
+      ],
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' }
+      ]
     }
   }
 ];

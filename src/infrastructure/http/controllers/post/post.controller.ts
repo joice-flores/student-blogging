@@ -8,22 +8,18 @@ import {
   updatePost,
   deletePost,
   searchPosts
-} from '@application/use-cases/post.use-cases';
+} from '@application/use-cases/post';
 import {
   createPostSchema,
   updatePostSchema,
   searchPostSchema
 } from '@application/dtos/post.validation';
+import { validateOrThrow } from '@shared/utils/validation';
 
 export class PostController {
   async create(request: FastifyRequest, reply: FastifyReply) {
-    const validated = createPostSchema.safeParse(request.body);
-
-    if (!validated.success) {
-      return this.handleError(validated.error, reply);
-    }
-
-    const post = await createPost(validated.data);
+    const data = validateOrThrow(createPostSchema, request.body);
+    const post = await createPost(data);
 
     return reply.status(201).send({
       success: true,
@@ -56,13 +52,8 @@ export class PostController {
 
   async update(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as { id: string };
-    const validated = updatePostSchema.safeParse(request.body);
-
-    if (!validated.success) {
-      return this.handleError(validated.error, reply);
-    }
-
-    const post = await updatePost(id, validated.data);
+    const data = validateOrThrow(updatePostSchema, request.body);
+    const post = await updatePost(id, data);
 
     return reply.send({
       success: true,
@@ -75,54 +66,20 @@ export class PostController {
     const { id } = request.params as { id: string };
     await deletePost(id);
 
-    return reply.status(204).send();
+    return reply.send({
+      success: true,
+      message: translate(POSTS.SUCCESS.DELETED)
+    });
   }
 
   async search(request: FastifyRequest, reply: FastifyReply) {
-    const validated = searchPostSchema.safeParse(request.query);
-
-    if (!validated.success) {
-      return this.handleError(validated.error, reply);
-    }
-
+    const params = validateOrThrow(searchPostSchema, request.query);
     const limit = Math.min(parseInt(String(request.query.limit || 50)), 100);
-    const posts = await searchPosts(validated.data.q, limit);
+    const posts = await searchPosts(params.q, limit);
 
     return reply.send({
       success: true,
       data: posts
-    });
-  }
-
-  private handleError(error: unknown, reply: FastifyReply) {
-    const err = error as any;
-
-    if (err.errors) {
-      return reply.status(400).send({
-        success: false,
-        message: 'translate(POSTS.ERRORS.VALIDATION)',
-        errors: err.errors
-      });
-    }
-
-    if (err.message?.includes('not found')) {
-      return reply.status(404).send({
-        success: false,
-        message: err.message
-      });
-    }
-
-    if (err.message?.includes('required')) {
-      return reply.status(400).send({
-        success: false,
-        message: err.message
-      });
-    }
-
-    return reply.status(500).send({
-      success: false,
-      message: translate(POSTS.ERRORS.VALIDATION),
-      description: error?.flatten().fieldErrors
     });
   }
 }
