@@ -20,6 +20,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "docker:dev": "docker compose --env-file .env -p sb-dev -f deployment/compose.dev.yml up -d",
+    "docker:dev:stop": "docker compose --env-file .env -p sb-dev -f deployment/compose.dev.yml stop",
     "docker:dev:build": "docker compose --env-file .env -p sb-dev -f deployment/compose.dev.yml build --no-cache",
     "docker:dev:dep": "docker compose --env-file .env -p sb-dev -f deployment/compose.dev.yml run --rm sb_api_dev npm install",
     "docker:dev:down": "docker compose --env-file .env -p sb-dev -f deployment/compose.dev.yml down",

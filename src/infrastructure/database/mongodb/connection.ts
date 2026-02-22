@@ -1,6 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import { ENVIRONMENT } from '@shared/constants/i18n.keys';
 import { translate } from '@shared/i18n';
+import { ErrorBuilder } from '@shared/errors/builder';
 
 let client: MongoClient;
 let db: Db;
@@ -18,7 +19,11 @@ export async function connectDatabase(uri: string): Promise<Db> {
 }
 
 export function getDatabase(): Db {
-  if (!db) throw new Error(ENVIRONMENT.MONGODB.ERRORS.CONNECTED);
+  if (!db)
+    throw ErrorBuilder.internal(
+      translate(ENVIRONMENT.MONGODB.ERRORS.CONNECTED)
+    );
+
   return db;
 }
 

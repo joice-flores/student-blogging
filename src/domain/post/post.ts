@@ -1,4 +1,6 @@
-import { PostId } from '@domain/value-objects/post-id';
+import { PostId } from '@domain/post/value-objects/post-id';
+import { createPostSchema } from '@infrastructure/http/controllers/post/post.validation';
+import { validateOrThrow } from '@shared/utils/validation';
 
 export interface PostProps {
   id?: PostId;
@@ -29,15 +31,11 @@ export class Post {
   }
 
   private validate(): void {
-    if (!this._title || this._title.trim().length === 0) {
-      throw new Error('Title is required');
-    }
-    if (!this._content || this._content.trim().length === 0) {
-      throw new Error('Content is required');
-    }
-    if (!this._author || this._author.trim().length === 0) {
-      throw new Error('Author is required');
-    }
+    validateOrThrow(createPostSchema, {
+      title: this._title,
+      content: this._content,
+      author: this._author
+    });
   }
 
   get id(): PostId {

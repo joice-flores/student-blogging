@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
-import { postRoutes } from '@infrastructure/http/routes/post.routes';
+import { postRoutes } from '@infrastructure/http/routes/post';
 import { errorHandler } from './middlewares/error-handler';
 
 function createServer() {

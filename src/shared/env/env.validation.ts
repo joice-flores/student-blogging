@@ -1,9 +1,12 @@
 import { z } from 'zod';
 import { ENVIRONMENT } from '@shared/constants/i18n.keys';
 import { translate } from '@shared/i18n';
+import { ErrorBuilder } from '@shared/errors/builder';
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
   PORT: z.coerce.number().default(3000),
   DEFAULT_LANGUAGE: z.enum(['pt-BR', 'en-US']).default('en-US'),
   MONGODB_URI: z.url({ message: translate(ENVIRONMENT.MONGODB.ERRORS.URI) }),
@@ -18,7 +21,9 @@ const envSchema = z.object({
     .string()
     .transform(val => val === 'false')
     .default(false),
-  GF_SERVER_ROOT_URL: z.url({ message: translate(ENVIRONMENT.GRAFANA.ERRORS.SERVER_ROOT_URL) })
+  GF_SERVER_ROOT_URL: z.url({
+    message: translate(ENVIRONMENT.GRAFANA.ERRORS.SERVER_ROOT_URL)
+  })
 });
 
 type Env = z.infer<typeof envSchema>;
@@ -38,7 +43,7 @@ function validateEnv(): Env {
 
     console.error(errorMessage);
 
-    throw new Error(errorMessage);
+    throw ErrorBuilder.internal(errorMessage);
   }
 
   environment = result.data;

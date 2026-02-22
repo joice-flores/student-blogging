@@ -1,4 +1,10 @@
-import { createPost, listPosts, getPostById, updatePost, deletePost } from '@application/use-cases/post';
+import {
+  createPost,
+  listPosts,
+  getPostById,
+  updatePost,
+  deletePost
+} from '@application/post';
 import { getDatabase } from '@infrastructure/database/mongodb/connection';
 
 jest.mock('@infrastructure/database/mongodb/connection');
@@ -19,11 +25,19 @@ describe('Post Use Cases', () => {
   describe('createPost', () => {
     it('should create a post successfully', async () => {
       const mockCollection = {
-        insertOne: jest.fn().mockResolvedValue({ insertedId: { toString: () => '507f1f77bcf86cd799439011' } })
+        insertOne: jest
+          .fn()
+          .mockResolvedValue({
+            insertedId: { toString: () => '507f1f77bcf86cd799439011' }
+          })
       };
       mockDb.collection.mockReturnValue(mockCollection);
 
-      const result = await createPost({ title: 'Test', content: 'Content', author: 'Author' });
+      const result = await createPost({
+        title: 'Test',
+        content: 'Content',
+        author: 'Author'
+      });
 
       expect(result).toHaveProperty('_id');
       expect(result.title).toBe('Test');
@@ -31,23 +45,41 @@ describe('Post Use Cases', () => {
     });
 
     it('should throw error if title is missing', async () => {
-      await expect(createPost({ title: '', content: 'Content', author: 'Author' })).rejects.toThrow();
+      await expect(
+        createPost({ title: '', content: 'Content', author: 'Author' })
+      ).rejects.toThrow();
     });
 
     it('should throw error if content is missing', async () => {
-      await expect(createPost({ title: 'Test', content: '', author: 'Author' })).rejects.toThrow();
+      await expect(
+        createPost({ title: 'Test', content: '', author: 'Author' })
+      ).rejects.toThrow();
     });
 
     it('should throw error if author is missing', async () => {
-      await expect(createPost({ title: 'Test', content: 'Content', author: '' })).rejects.toThrow();
+      await expect(
+        createPost({ title: 'Test', content: 'Content', author: '' })
+      ).rejects.toThrow();
     });
   });
 
   describe('listPosts', () => {
     it('should list posts with pagination', async () => {
       const mockPosts = [
-        { _id: { toString: () => '1' }, title: 'Post 1', content: 'Content 1', author: 'Author 1', createdAt: new Date() },
-        { _id: { toString: () => '2' }, title: 'Post 2', content: 'Content 2', author: 'Author 2', createdAt: new Date() }
+        {
+          _id: { toString: () => '1' },
+          title: 'Post 1',
+          content: 'Content 1',
+          author: 'Author 1',
+          createdAt: new Date()
+        },
+        {
+          _id: { toString: () => '2' },
+          title: 'Post 2',
+          content: 'Content 2',
+          author: 'Author 2',
+          createdAt: new Date()
+        }
       ];
       const mockCollection = {
         find: jest.fn().mockReturnValue({
@@ -109,11 +141,16 @@ describe('Post Use Cases', () => {
         updatedAt: new Date()
       };
       const mockCollection = {
-        findOneAndUpdate: jest.fn().mockResolvedValue({ value: mockUpdatedPost })
+        findOneAndUpdate: jest
+          .fn()
+          .mockResolvedValue({ value: mockUpdatedPost })
       };
       mockDb.collection.mockReturnValue(mockCollection);
 
-      const result = await updatePost('507f1f77bcf86cd799439011', { title: 'Updated', content: 'Updated Content' });
+      const result = await updatePost('507f1f77bcf86cd799439011', {
+        title: 'Updated',
+        content: 'Updated Content'
+      });
 
       expect(result.title).toBe('Updated');
       expect(mockCollection.findOneAndUpdate).toHaveBeenCalled();
@@ -125,7 +162,9 @@ describe('Post Use Cases', () => {
       };
       mockDb.collection.mockReturnValue(mockCollection);
 
-      await expect(updatePost('invalid-id', { title: 'Updated' })).rejects.toThrow();
+      await expect(
+        updatePost('invalid-id', { title: 'Updated' })
+      ).rejects.toThrow();
     });
   });
 
