@@ -1,4 +1,3 @@
-// src/shared/utils/validation.ts
 import { z } from 'zod';
 import { ErrorBuilder } from '@shared/errors/builder';
 

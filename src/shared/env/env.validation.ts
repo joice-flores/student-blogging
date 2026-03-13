@@ -23,7 +23,8 @@ const envSchema = z.object({
     .default(false),
   GF_SERVER_ROOT_URL: z.url({
     message: translate(ENVIRONMENT.GRAFANA.ERRORS.SERVER_ROOT_URL)
-  })
+  }),
+  JWT_SECRET: z.string().min(32)
 });
 
 type Env = z.infer<typeof envSchema>;

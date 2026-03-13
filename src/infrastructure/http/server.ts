@@ -1,12 +1,14 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { postRoutes } from '@infrastructure/http/routes/post';
-import { errorHandler } from './middlewares/error-handler';
+import { authRoutes } from '@infrastructure/http/routes/auth';
+import { errorHandler } from '@infrastructure/http/middlewares/error-handler.middleware';
 
 function createServer() {
   const app = fastify({ logger: true });
 
   app.register(cors);
+  app.register(authRoutes, { prefix: '/auth' });
   app.register(postRoutes, { prefix: '/posts' });
 
   app.get('/health', async () => ({ status: 'ok' }));

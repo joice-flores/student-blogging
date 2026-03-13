@@ -6,7 +6,8 @@ export const enUS = {
     internal: 'Internal server error',
     notFound: 'Resource not found',
     validation: 'Validation error',
-    badRequest: 'Bad request'
+    badRequest: 'Bad request',
+    unauthorized: 'Unauthorized'
   },
   posts: {
     errors: {
@@ -21,6 +22,14 @@ export const enUS = {
       created: 'Post created successfully',
       updated: 'Post updated successfully',
       deleted: 'Post deleted successfully'
+    }
+  },
+  user: {
+    errors: {
+      emailAlreadyInUse: 'Email is already in use',
+      invalidCredentials: 'Invalid email or password',
+      invalidEmail: 'Invalid email',
+      notFound: 'User not found'
     }
   }
 };

@@ -1,4 +1,4 @@
-import { Post } from '@domain/post/post';
+import { Post } from '@domain/post/entities/post';
 import { PostId } from '@domain/post/value-objects/post-id';
 
 export interface IPostRepository {

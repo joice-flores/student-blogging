@@ -46,3 +46,13 @@ export const POSTS = {
     DELETED: 'posts.success.deleted'
   }
 } as const;
+
+export const USERS = {
+  ERRORS: {
+    EMAIL_ALREADY_IN_USE: 'users.errors.emailAlreadyInUse',
+    INVALID_CREDENTIALS: 'users.errors.invalidCredentials',
+    INVALID_EMAIL: 'users.errors.invalidEmail',
+    NOT_FOUND: 'users.errors.notFound',
+    UNAUTHORIZED: 'users.errors.unauthorized'
+  }
+} as const;
