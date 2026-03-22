@@ -2,76 +2,182 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '24.12.0'
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-    
+    env:
+      NODE_ENV: test
+      MONGODB_URI: mongodb://localhost:27017/student-blogging
+      JWT_SECRET: ci-jwt-secret
+
     services:
       mongodb:
         image: mongo:7.0
         env:
           MONGO_INITDB_DATABASE: student-blogging
         options: >-
-          --health-cmd mongosh
+          --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
           - 27017:27017
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '24.12.0'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Run linter
-      run: npm run lint
-    
-    - name: Build project
-      run: npm run build
-    
-    - name: Run tests
-      run: npm test -- --coverage
-      env:
-        MONGODB_URI: mongodb://localhost:27017/student-blogging
-        NODE_ENV: test
-    
-    - name: Check coverage threshold
-      run: |
-        COVERAGE=$(node -p "require('./coverage/coverage-summary.json').total.lines.pct")
-        if (( $(echo "$COVERAGE < 20" | bc -l) )); then
-          echo "Coverage $COVERAGE% is below 20%"
-          exit 1
-        fi
-        echo "Coverage: $COVERAGE%"
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
 
-  build-docker:
-    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Gate - TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Gate - ESLint
+        run: npm run lint
+
+      - name: Gate - Prettier format check
+        run: npm run format:check
+
+      - name: Build project
+        run: npm run build
+
+      - name: Ensure integration tests exist
+        run: |
+          INTEGRATION_TEST_COUNT=$(find tests/integration -type f -name "*.spec.ts" | wc -l)
+          if [ "$INTEGRATION_TEST_COUNT" -eq 0 ]; then
+            echo "No integration tests found in tests/integration. Add at least one .spec.ts file."
+            exit 1
+          fi
+          echo "Integration tests found: $INTEGRATION_TEST_COUNT"
+
+      - name: Run unit tests with coverage
+        run: npm run test:unit:coverage
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(node -p "require('./coverage/coverage-summary.json').total.lines.pct")
+          if awk "BEGIN {exit !($COVERAGE < 20)}"; then
+            echo "Coverage $COVERAGE% is below 20%"
+            exit 1
+          fi
+          echo "Coverage: $COVERAGE%"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  push-image:
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+    outputs:
+      image_tag: ${{ steps.vars.outputs.short_sha }}
+
+    permissions:
+      contents: read
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Build Docker image
-      run: |
-        docker build -f deployment/docker/Dockerfile -t student-blogging:latest .
-        docker stop test-api
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Hub secrets
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "Missing DOCKERHUB_USERNAME or DOCKERHUB_TOKEN secrets."
+            exit 1
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Compute image tag from commit SHA
+        id: vars
+        run: |
+          SHORT_SHA="${GITHUB_SHA::12}"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/docker/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/student-blogging:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/student-blogging:${{ steps.vars.outputs.short_sha }}
+
+      - name: Log published image tags
+        run: |
+          echo "Published image: ${{ secrets.DOCKERHUB_USERNAME }}/student-blogging:${{ steps.vars.outputs.short_sha }}"
+          echo "Published image: ${{ secrets.DOCKERHUB_USERNAME }}/student-blogging:latest"
+
+      - name: Write image tags to job summary
+        run: |
+          {
+            echo "## Docker image published"
+            echo ""
+            echo "[Docker Hub Repository](https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/student-blogging)"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: push-image
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check deploy secrets
+        id: deploy_check
+        run: |
+          if [ -n "${{ secrets.DEPLOY_HOST }}" ] && [ -n "${{ secrets.DEPLOY_USER }}" ] && [ -n "${{ secrets.DEPLOY_SSH_KEY }}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Deploy skipped: missing DEPLOY_HOST, DEPLOY_USER or DEPLOY_SSH_KEY"
+          fi
+
+      - name: Deploy on server (optional)
+        if: steps.deploy_check.outputs.enabled == 'true'
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/student-blogging
+          IMAGE_TAG: ${{ needs.push-image.outputs.image_tag }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            docker pull ${IMAGE_NAME}:${IMAGE_TAG}
+            cd ${DEPLOY_PATH:-/opt/student-blogging}
+            IMAGE_TAG=${IMAGE_TAG} docker compose --env-file .env -f deployment/compose.yml pull sb_api
+            IMAGE_TAG=${IMAGE_TAG} docker compose --env-file .env -f deployment/compose.yml up -d sb_api

@@ -1,16 +1,12 @@
 services:
   sb_api:
+    image: rommb/student-blogging:${IMAGE_TAG:-latest}
     build:
       context: ../
       dockerfile: deployment/docker/Dockerfile
     container_name: student-blogging-api
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGODB_URI=${MONGODB_URI}
-      - PORT=${PORT}
-      - SWAGGER_ENABLED=${SWAGGER_ENABLED}
     env_file:
       - ../.env
     depends_on:
@@ -19,12 +15,6 @@ services:
     networks:
       - student-blogging-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 40s
 
   sb_mongodb:
     image: mongo:7.0-jammy

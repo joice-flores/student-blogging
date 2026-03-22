@@ -12,7 +12,7 @@ module.exports = {
     '!src/infrastructure/http/server.ts'
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
   moduleNameMapper: {
     '^@domain/(.*)$': '<rootDir>/src/domain/$1',
