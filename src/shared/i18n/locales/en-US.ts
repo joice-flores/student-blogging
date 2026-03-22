@@ -24,12 +24,13 @@ export const enUS = {
       deleted: 'Post deleted successfully'
     }
   },
-  user: {
+  users: {
     errors: {
       emailAlreadyInUse: 'Email is already in use',
       invalidCredentials: 'Invalid email or password',
       invalidEmail: 'Invalid email',
-      notFound: 'User not found'
+      notFound: 'User not found',
+      unauthorized: 'User Unauthorized'
     }
   }
 };

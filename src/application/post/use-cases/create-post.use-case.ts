@@ -1,19 +1,14 @@
 import { Post, IPostRepository } from '@domain/post';
-
-export interface CreatePostRequest {
-  title: string;
-  content: string;
-  author: string;
-}
+import { CreatePostDto } from '@application/post/dto/post.dto';
 
 export class CreatePost {
   constructor(private postRepository: IPostRepository) {}
 
-  async execute(request: CreatePostRequest): Promise<Post> {
+  async execute(input: CreatePostDto): Promise<Post> {
     const post = new Post({
-      title: request.title,
-      content: request.content,
-      author: request.author
+      title: input.title,
+      content: input.content,
+      author: input.author
     });
 
     await this.postRepository.create(post);

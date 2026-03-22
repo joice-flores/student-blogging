@@ -1,31 +1,24 @@
 import { Collection, Db } from 'mongodb';
 import { Post, PostId, IPostRepository } from '@domain/post';
-
-interface PostDocument {
-  _id: string;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { ListPostsDto } from '@application/post/dto/post.dto';
+import { PostDocument } from '@infrastructure/database/schemas/post.schema';
 
 export class MongoPostRepository implements IPostRepository {
-  private collection: Collection;
+  private collection: Collection<PostDocument>;
 
   constructor(database: Db) {
-    this.collection = database.collection('posts');
+    this.collection = database.collection<PostDocument>('posts');
   }
 
   async create(post: Post): Promise<void> {
-    const document = {
+    const document: PostDocument = {
       _id: post.id.toString(),
       title: post.title,
       content: post.content,
       author: post.author,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt
-    } as PostDocument;
+    };
 
     await this.collection.insertOne(document);
   }
@@ -35,13 +28,21 @@ export class MongoPostRepository implements IPostRepository {
       _id: id.toString()
     });
 
-    return document ? this.toDomain(document as unknown as PostDocument) : null;
+    return document ? this.toDomain(document) : null;
   }
 
-  async findAll(): Promise<Post[]> {
-    const documents = await this.collection.find().toArray();
+  async findAllPaginated(
+    input: ListPostsDto
+  ): Promise<{ posts: Post[]; total: number }> {
+    const [documents, total] = await Promise.all([
+      this.collection.find().skip(input.skip).limit(input.limit).toArray(),
+      this.collection.countDocuments()
+    ]);
 
-    return documents.map(doc => this.toDomain(doc as unknown as PostDocument));
+    return {
+      posts: documents.map(doc => this.toDomain(doc)),
+      total
+    };
   }
 
   async update(post: Post): Promise<Post | null> {
@@ -77,7 +78,7 @@ export class MongoPostRepository implements IPostRepository {
       })
       .toArray();
 
-    return docs.map(doc => this.toDomain(doc as unknown as PostDocument));
+    return docs.map(doc => this.toDomain(doc));
   }
 
   private toDomain(doc: PostDocument): Post {

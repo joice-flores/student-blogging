@@ -46,7 +46,6 @@ export class ErrorBuilder {
     let message = this._message;
 
     if (this._i18nKey) {
-      console.log(this._i18nParams);
       message = translate(this._i18nKey);
     }
 

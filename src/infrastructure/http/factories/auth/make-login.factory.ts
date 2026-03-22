@@ -1,6 +1,6 @@
 import { Login } from '@application/auth';
 import { getDatabase } from '@infrastructure/database/mongodb/connection';
-import { MongoUserRepository } from '@infrastructure/database/mongodb/repositories/mongo-user.repository copy';
+import { MongoUserRepository } from '@infrastructure/database/mongodb/repositories/mongo-user.repository';
 import { Argon2HashProvider } from '@infrastructure/providers/argon2-hash-provider';
 import { JwtTokenProvider } from '@infrastructure/providers/jwt-token-provider';
 import { env } from '@shared/env';

@@ -6,16 +6,14 @@ services:
     ports:
       - '3000:3000'
       - '9229:9229'
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGODB_URI=${MONGODB_URI}
-      - PORT=${PORT}
-      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-      - CHOKIDAR_INTERVAL=${CHOKIDAR_INTERVAL}
     env_file:
       - ../.env
     volumes:
       - ../src:/app/src
+      - ../tests:/app/tests
+      - ../jest.config.js:/app/jest.config.js
+      - ../tsconfig.json:/app/tsconfig.json
+      - ../eslint.config.mjs:/app/eslint.config.mjs
       - ../package.json:/app/package.json
       - /app/node_modules
     depends_on:

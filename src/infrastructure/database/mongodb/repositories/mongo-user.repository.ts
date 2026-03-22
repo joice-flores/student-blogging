@@ -48,7 +48,7 @@ export class MongoUserRepository implements IUserRepository {
 
   private toEntity(doc: UserDocument): User {
     return User.create({
-      id: UserId.create(),
+      id: UserId.create(doc._id),
       name: doc.name,
       email: Email.create(doc.email),
       password: doc.password,

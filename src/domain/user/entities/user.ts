@@ -64,7 +64,7 @@ export class User {
 
   static create(props: UserProps): User {
     return new User({
-      id: UserId.create(),
+      id: props.id === undefined ? UserId.create() : props.id,
       name: props.name,
       email: props.email,
       password: props.password,

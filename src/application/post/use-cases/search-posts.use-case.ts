@@ -1,13 +1,10 @@
 import { Post, IPostRepository } from '@domain/post';
-
-export interface SearchPostsRequest {
-  query: string;
-}
+import { SearchPostsDto } from '@application/post/dto/post.dto';
 
 export class SearchPosts {
   constructor(private postRepository: IPostRepository) {}
 
-  async execute(request: SearchPostsRequest): Promise<Post[]> {
-    return await this.postRepository.search(request.query);
+  async execute(input: SearchPostsDto): Promise<Post[]> {
+    return await this.postRepository.search(input.query);
   }
 }

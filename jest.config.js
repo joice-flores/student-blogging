@@ -21,16 +21,19 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@base/(.*)$': '<rootDir>/$1'
   },
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        strict: true,
-        esModuleInterop: true,
-        skipLibCheck: true,
-        forceConsistentCasingInFileNames: true,
-        resolveJsonModule: true,
-        module: 'commonjs'
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          strict: true,
+          esModuleInterop: true,
+          skipLibCheck: true,
+          forceConsistentCasingInFileNames: true,
+          resolveJsonModule: true,
+          module: 'commonjs'
+        }
       }
-    }
+    ]
   }
 };

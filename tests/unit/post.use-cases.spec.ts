@@ -1,193 +1,259 @@
 import {
-  createPost,
-  listPosts,
-  getPostById,
-  updatePost,
-  deletePost
+  CreatePost,
+  ListPosts,
+  GetPostById,
+  UpdatePost,
+  DeletePost,
+  SearchPosts
 } from '@application/post';
-import { getDatabase } from '@infrastructure/database/mongodb/connection';
-
-jest.mock('@infrastructure/database/mongodb/connection');
-jest.mock('@shared/i18n', () => ({
-  translate: (key: string) => key
-}));
-
-const mockDb = {
-  collection: jest.fn()
-};
+import { Post, IPostRepository, PostId } from '@domain/post';
+import { AppError } from '@shared/errors/builder/app-error';
 
 describe('Post Use Cases', () => {
+  let postRepository: jest.Mocked<IPostRepository>;
+
   beforeEach(() => {
-    jest.clearAllMocks();
-    (getDatabase as jest.Mock).mockReturnValue(mockDb);
+    postRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      findAllPaginated: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      search: jest.fn()
+    };
   });
 
-  describe('createPost', () => {
+  describe('CreatePost', () => {
     it('should create a post successfully', async () => {
-      const mockCollection = {
-        insertOne: jest
-          .fn()
-          .mockResolvedValue({
-            insertedId: { toString: () => '507f1f77bcf86cd799439011' }
-          })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+      const useCase = new CreatePost(postRepository);
 
-      const result = await createPost({
+      const result = await useCase.execute({
         title: 'Test',
         content: 'Content',
         author: 'Author'
       });
 
-      expect(result).toHaveProperty('_id');
+      expect(result).toBeInstanceOf(Post);
       expect(result.title).toBe('Test');
-      expect(mockCollection.insertOne).toHaveBeenCalled();
+      expect(result.content).toBe('Content');
+      expect(result.author).toBe('Author');
+      expect(postRepository.create).toHaveBeenCalledTimes(1);
+      expect(postRepository.create).toHaveBeenCalledWith(result);
     });
 
-    it('should throw error if title is missing', async () => {
+    it('should throw validation error if title is missing', async () => {
+      const useCase = new CreatePost(postRepository);
+
       await expect(
-        createPost({ title: '', content: 'Content', author: 'Author' })
-      ).rejects.toThrow();
+        useCase.execute({ title: '', content: 'Content', author: 'Author' })
+      ).rejects.toBeInstanceOf(AppError);
     });
 
-    it('should throw error if content is missing', async () => {
+    it('should throw validation error if content is missing', async () => {
+      const useCase = new CreatePost(postRepository);
+
       await expect(
-        createPost({ title: 'Test', content: '', author: 'Author' })
-      ).rejects.toThrow();
+        useCase.execute({ title: 'Test', content: '', author: 'Author' })
+      ).rejects.toBeInstanceOf(AppError);
     });
 
-    it('should throw error if author is missing', async () => {
+    it('should throw validation error if author is missing', async () => {
+      const useCase = new CreatePost(postRepository);
+
       await expect(
-        createPost({ title: 'Test', content: 'Content', author: '' })
-      ).rejects.toThrow();
+        useCase.execute({ title: 'Test', content: 'Content', author: '' })
+      ).rejects.toBeInstanceOf(AppError);
     });
   });
 
-  describe('listPosts', () => {
-    it('should list posts with pagination', async () => {
-      const mockPosts = [
-        {
-          _id: { toString: () => '1' },
-          title: 'Post 1',
-          content: 'Content 1',
-          author: 'Author 1',
-          createdAt: new Date()
-        },
-        {
-          _id: { toString: () => '2' },
-          title: 'Post 2',
-          content: 'Content 2',
-          author: 'Author 2',
-          createdAt: new Date()
-        }
+  describe('ListPosts', () => {
+    it('should list posts', async () => {
+      const posts = [
+        new Post({ title: 'Post 1', content: 'Content 1', author: 'Author 1' }),
+        new Post({ title: 'Post 2', content: 'Content 2', author: 'Author 2' })
       ];
-      const mockCollection = {
-        find: jest.fn().mockReturnValue({
-          sort: jest.fn().mockReturnValue({
-            skip: jest.fn().mockReturnValue({
-              limit: jest.fn().mockReturnValue({
-                toArray: jest.fn().mockResolvedValue(mockPosts)
-              })
-            })
-          })
-        })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
 
-      const result = await listPosts(50, 0);
+      postRepository.findAllPaginated.mockResolvedValue({ posts, total: 2 });
 
-      expect(result).toHaveLength(2);
-      expect(result[0]).toHaveProperty('_id');
+      const useCase = new ListPosts(postRepository);
+
+      const result = await useCase.execute({ limit: 10, skip: 0 });
+
+      expect(result.posts).toHaveLength(2);
+      expect(result.posts[0]).toBeInstanceOf(Post);
+      expect(result.total).toBe(2);
+      expect(postRepository.findAllPaginated).toHaveBeenCalledTimes(1);
+      expect(postRepository.findAllPaginated).toHaveBeenCalledWith({
+        limit: 10,
+        skip: 0
+      });
     });
   });
 
-  describe('getPostById', () => {
+  describe('GetPostById', () => {
     it('should return a post by id', async () => {
-      const mockPost = {
-        _id: { toString: () => '507f1f77bcf86cd799439011' },
+      const post = new Post({
         title: 'Test',
         content: 'Content',
-        author: 'Author',
-        createdAt: new Date()
-      };
-      const mockCollection = {
-        findOne: jest.fn().mockResolvedValue(mockPost)
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+        author: 'Author'
+      });
 
-      const result = await getPostById('507f1f77bcf86cd799439011');
+      postRepository.findById.mockResolvedValue(post);
 
-      expect(result.title).toBe('Test');
-      expect(result._id).toBe('507f1f77bcf86cd799439011');
+      const useCase = new GetPostById(postRepository);
+
+      const result = await useCase.execute({ id: post.id.toString() });
+
+      expect(result).toBe(post);
+      expect(postRepository.findById).toHaveBeenCalledTimes(1);
+      const calledId = postRepository.findById.mock.calls[0][0] as PostId;
+      expect(calledId.toString()).toBe(post.id.toString());
     });
 
-    it('should throw error if post not found', async () => {
-      const mockCollection = {
-        findOne: jest.fn().mockResolvedValue(null)
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+    it('should throw not found error if post does not exist', async () => {
+      postRepository.findById.mockResolvedValue(null);
 
-      await expect(getPostById('invalid-id')).rejects.toThrow();
+      const useCase = new GetPostById(postRepository);
+
+      await expect(
+        useCase.execute({ id: 'non-existent-id' })
+      ).rejects.toMatchObject({
+        statusCode: 404
+      });
     });
   });
 
-  describe('updatePost', () => {
-    it('should update a post successfully', async () => {
-      const mockUpdatedPost = {
-        _id: { toString: () => '507f1f77bcf86cd799439011' },
-        title: 'Updated',
-        content: 'Updated Content',
-        author: 'Author',
-        updatedAt: new Date()
-      };
-      const mockCollection = {
-        findOneAndUpdate: jest
-          .fn()
-          .mockResolvedValue({ value: mockUpdatedPost })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+  describe('UpdatePost', () => {
+    it('should update a post successfully when it exists', async () => {
+      const existingPost = new Post({
+        title: 'Old',
+        content: 'Old content',
+        author: 'Author'
+      });
 
-      const result = await updatePost('507f1f77bcf86cd799439011', {
+      const updatedPost = new Post({
+        id: existingPost.id,
         title: 'Updated',
-        content: 'Updated Content'
+        content: 'Updated content',
+        author: existingPost.author,
+        createdAt: existingPost.createdAt,
+        updatedAt: new Date()
+      });
+
+      postRepository.findById.mockResolvedValue(existingPost);
+      postRepository.update.mockResolvedValue(updatedPost);
+
+      const useCase = new UpdatePost(postRepository);
+
+      const result = await useCase.execute({
+        id: existingPost.id.toString(),
+        title: 'Updated',
+        content: 'Updated content'
       });
 
       expect(result.title).toBe('Updated');
-      expect(mockCollection.findOneAndUpdate).toHaveBeenCalled();
+      expect(result.content).toBe('Updated content');
+      expect(postRepository.findById).toHaveBeenCalledTimes(1);
+      expect(postRepository.update).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error if post not found on update', async () => {
-      const mockCollection = {
-        findOneAndUpdate: jest.fn().mockResolvedValue({ value: null })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+    it('should throw not found error if post does not exist', async () => {
+      postRepository.findById.mockResolvedValue(null);
+
+      const useCase = new UpdatePost(postRepository);
 
       await expect(
-        updatePost('invalid-id', { title: 'Updated' })
-      ).rejects.toThrow();
+        useCase.execute({ id: 'non-existent-id', title: 'New', content: 'New' })
+      ).rejects.toMatchObject({ statusCode: 404 });
+    });
+
+    it('should throw not found error if repository returns null on update', async () => {
+      const existingPost = new Post({
+        title: 'Old',
+        content: 'Old content',
+        author: 'Author'
+      });
+
+      postRepository.findById.mockResolvedValue(existingPost);
+      postRepository.update.mockResolvedValue(null);
+
+      const useCase = new UpdatePost(postRepository);
+
+      await expect(
+        useCase.execute({
+          id: existingPost.id.toString(),
+          title: 'Updated',
+          content: 'Updated content'
+        })
+      ).rejects.toMatchObject({ statusCode: 404 });
+    });
+
+    it('should not update the post when title or content is missing', async () => {
+      const existingPost = new Post({
+        title: 'Old',
+        content: 'Old content',
+        author: 'Author'
+      });
+
+      const updateSpy = jest.spyOn(existingPost, 'update');
+
+      postRepository.findById.mockResolvedValue(existingPost);
+      postRepository.update.mockResolvedValue(existingPost);
+
+      const useCase = new UpdatePost(postRepository);
+
+      await useCase.execute({
+        id: existingPost.id.toString(),
+        title: 'Only title'
+      });
+
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(postRepository.update).toHaveBeenCalledWith(existingPost);
     });
   });
 
-  describe('deletePost', () => {
+  describe('DeletePost', () => {
     it('should delete a post successfully', async () => {
-      const mockCollection = {
-        deleteOne: jest.fn().mockResolvedValue({ deletedCount: 1 })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+      postRepository.delete.mockResolvedValue(true);
 
-      const result = await deletePost('507f1f77bcf86cd799439011');
+      const useCase = new DeletePost(postRepository);
+
+      const result = await useCase.execute({ id: 'any-id' });
 
       expect(result).toBe(true);
-      expect(mockCollection.deleteOne).toHaveBeenCalled();
+      expect(postRepository.delete).toHaveBeenCalledTimes(1);
+      const calledId = postRepository.delete.mock.calls[0][0] as PostId;
+      expect(calledId.toString()).toBe('any-id');
     });
 
-    it('should throw error if post not found on delete', async () => {
-      const mockCollection = {
-        deleteOne: jest.fn().mockResolvedValue({ deletedCount: 0 })
-      };
-      mockDb.collection.mockReturnValue(mockCollection);
+    it('should throw not found error if delete returns false', async () => {
+      postRepository.delete.mockResolvedValue(false);
 
-      await expect(deletePost('invalid-id')).rejects.toThrow();
+      const useCase = new DeletePost(postRepository);
+
+      await expect(
+        useCase.execute({ id: 'non-existent-id' })
+      ).rejects.toMatchObject({
+        statusCode: 404
+      });
+    });
+  });
+
+  describe('SearchPosts', () => {
+    it('should search posts by query', async () => {
+      const posts = [
+        new Post({ title: 'NestJS post', content: 'Content', author: 'Author' })
+      ];
+
+      postRepository.search.mockResolvedValue(posts);
+
+      const useCase = new SearchPosts(postRepository);
+
+      const result = await useCase.execute({ query: 'NestJS' });
+
+      expect(result).toEqual(posts);
+      expect(postRepository.search).toHaveBeenCalledTimes(1);
+      expect(postRepository.search).toHaveBeenCalledWith('NestJS');
     });
   });
 });
