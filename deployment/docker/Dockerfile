@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM node:24.12-alpine AS builder
 
 WORKDIR /app
