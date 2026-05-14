@@ -35,6 +35,7 @@ export class MongoUserRepository implements IUserRepository {
       name: user.name,
       email: user.email.getValue(),
       password: user.password,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };
@@ -47,11 +48,12 @@ export class MongoUserRepository implements IUserRepository {
   }
 
   private toEntity(doc: UserDocument): User {
-    return User.create({
+    return User.reconstitute({
       id: UserId.create(doc._id),
       name: doc.name,
       email: Email.create(doc.email),
       password: doc.password,
+      role: doc.role,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt
     });
