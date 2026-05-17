@@ -27,7 +27,8 @@ export class AuthRegister {
     const user = User.create({
       name: input.name.trim(),
       email,
-      password
+      password,
+      role: input.role
     });
 
     await this.userRepository.save(user);
@@ -36,6 +37,7 @@ export class AuthRegister {
       id: user.id.getValue(),
       name: user.name,
       email: user.email.getValue(),
+      role: user.role,
       createdAt: user.createdAt
     };
   }

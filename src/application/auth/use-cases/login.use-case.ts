@@ -35,13 +35,16 @@ export class Login {
       email: user.email.getValue()
     });
 
-    return {
+    const output = {
       accessToken,
       user: {
         id: user.id.getValue(),
         name: user.name,
-        email: user.email.getValue()
+        email: user.email.getValue(),
+        role: user.role
       }
     };
+
+    return output;
   }
 }

@@ -1,11 +1,14 @@
 import { UserId } from '@domain/user/value-objects/user-id';
 import { Email } from '@domain/user/value-objects/email';
 
+export type UserRole = 'teacher' | 'student';
+
 export interface UserProps {
   id?: UserId;
   name: string;
   email: Email;
   password: string;
+  role: UserRole;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -15,6 +18,7 @@ export class User {
   private _name: string;
   private readonly _email: Email;
   private _password: string;
+  private _role: UserRole;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
@@ -23,6 +27,7 @@ export class User {
     this._name = props.name;
     this._email = props.email;
     this._password = props.password;
+    this._role = props.role;
     this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || new Date();
 
@@ -54,6 +59,10 @@ export class User {
     return this._password;
   }
 
+  get role(): UserRole {
+    return this._role;
+  }
+
   get createdAt(): Date {
     return this._createdAt;
   }
@@ -68,6 +77,7 @@ export class User {
       name: props.name,
       email: props.email,
       password: props.password,
+      role: props.role,
       createdAt: new Date(),
       updatedAt: new Date()
     } as UserProps);
