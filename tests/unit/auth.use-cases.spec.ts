@@ -1,8 +1,13 @@
 import { AuthRegister, Login, Logout } from '@application/auth';
 import { HashProvider } from '@application/providers/hash-provider';
-import { User } from '@domain/user/entities/user';
-import { IUserRepository } from '@domain/user/repositories/user.repository';
-import { Email } from '@domain/user/value-objects/email';
+import {
+  Email,
+  IUserRepository,
+  Role,
+  RoleValue,
+  ROLES,
+  User
+} from '@domain/user';
 import { Argon2HashProvider } from '@infrastructure/providers/argon2-hash-provider';
 import { JwtTokenProvider } from '@infrastructure/providers/jwt-token-provider';
 
@@ -40,6 +45,7 @@ describe('Auth Use Cases', () => {
       expect(result.id).toEqual(expect.any(String));
       expect(result.name).toBe('John Doe');
       expect(result.email).toBe('john@example.com');
+      expect(result.role).toBe(ROLES.STUDENT);
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(hashProvider.hash).toHaveBeenCalledWith('secret123');
       expect(userRepository.save).toHaveBeenCalledTimes(1);
@@ -48,13 +54,15 @@ describe('Auth Use Cases', () => {
       expect(savedUser.password).toBe('hashed-password');
       expect(savedUser.name).toBe('John Doe');
       expect(savedUser.email.getValue()).toBe('john@example.com');
+      expect(savedUser.role.getValue()).toBe(ROLES.STUDENT);
     });
 
     it('should throw when email is already in use', async () => {
       const existingUser = User.create({
         name: 'Existing',
         email: Email.create('existing@example.com'),
-        password: 'hashed-password'
+        password: 'hashed-password',
+        role: Role.create(ROLES.STUDENT)
       });
 
       userRepository.findByEmail.mockResolvedValue(existingUser);
@@ -113,7 +121,8 @@ describe('Auth Use Cases', () => {
       const user = User.create({
         name: 'Jane',
         email: Email.create('jane@example.com'),
-        password: 'hashed-password'
+        password: 'hashed-password',
+        role: Role.create(ROLES.TEACHER)
       });
 
       userRepository.findByEmail.mockResolvedValue(user);
@@ -135,14 +144,16 @@ describe('Auth Use Cases', () => {
       );
       expect(signSpy).toHaveBeenCalledWith({
         sub: user.id.getValue(),
-        email: user.email.getValue()
+        email: user.email.getValue(),
+        role: user.role.getValue()
       });
       expect(result).toEqual({
         accessToken: 'access-token',
         user: {
           id: user.id.getValue(),
           name: user.name,
-          email: user.email.getValue()
+          email: user.email.getValue(),
+          role: user.role.getValue()
         }
       });
     });
@@ -176,7 +187,8 @@ describe('Auth Use Cases', () => {
       const user = User.create({
         name: 'Jane',
         email: Email.create('jane@example.com'),
-        password: 'hashed-password'
+        password: 'hashed-password',
+        role: Role.create(ROLES.STUDENT)
       });
 
       userRepository.findByEmail.mockResolvedValue(user);

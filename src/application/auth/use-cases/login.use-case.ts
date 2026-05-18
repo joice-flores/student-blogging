@@ -1,5 +1,4 @@
-import { IUserRepository } from '@domain/user/repositories/user.repository';
-import { Email } from '@domain/user/value-objects/email';
+import { Email, IUserRepository } from '@domain/user';
 import { UserError } from '@shared/errors/user/user-error';
 import { Argon2HashProvider } from '@infrastructure/providers/argon2-hash-provider';
 import { JwtTokenProvider } from '@infrastructure/providers/jwt-token-provider';
@@ -32,19 +31,18 @@ export class Login {
 
     const accessToken = this.tokenProvider.sign({
       sub: user.id.getValue(),
-      email: user.email.getValue()
+      email: user.email.getValue(),
+      role: user.role.getValue()
     });
 
-    const output = {
+    return {
       accessToken,
       user: {
         id: user.id.getValue(),
         name: user.name,
         email: user.email.getValue(),
-        role: user.role
+        role: user.role.getValue()
       }
     };
-
-    return output;
   }
 }

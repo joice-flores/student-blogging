@@ -52,6 +52,8 @@ export const USERS = {
     EMAIL_ALREADY_IN_USE: 'users.errors.emailAlreadyInUse',
     INVALID_CREDENTIALS: 'users.errors.invalidCredentials',
     INVALID_EMAIL: 'users.errors.invalidEmail',
+    INVALID_ROLE: 'users.errors.invalidRole',
+    FORBIDDEN: 'users.errors.forbidden',
     NOT_FOUND: 'users.errors.notFound',
     UNAUTHORIZED: 'users.errors.unauthorized'
   }

@@ -26,6 +26,22 @@ export class UserError extends ErrorBuilder {
       .build();
   }
 
+  static invalidRole(): AppError {
+    return this.create()
+      .withI18nKey(USERS.ERRORS.INVALID_ROLE)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static forbidden(): AppError {
+    return this.create()
+      .withI18nKey(USERS.ERRORS.FORBIDDEN)
+      .withStatusCode(403)
+      .withCode(Codes.FORBIDDEN)
+      .build();
+  }
+
   static notFound(): AppError {
     return this.create()
       .withI18nKey(USERS.ERRORS.NOT_FOUND)

@@ -2,17 +2,17 @@ import { Email, IUserRepository, Role, User } from '@domain/user';
 import { UserError } from '@shared/errors/user/user-error';
 import { HashProvider } from '@application/providers/hash-provider';
 import {
-  RegisterInputDTO,
-  RegisterOutputDTO
-} from '@application/auth/dto/auth.dto';
+  CreateUserInputDTO,
+  CreateUserOutputDTO
+} from '@application/user/dto/user.dto';
 
-export class AuthRegister {
+export class CreateUser {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly hashProvider: HashProvider
   ) {}
 
-  async execute(input: RegisterInputDTO): Promise<RegisterOutputDTO> {
+  async execute(input: CreateUserInputDTO): Promise<CreateUserOutputDTO> {
     const email = Email.create(input.email);
     const existing = await this.userRepository.findByEmail(email);
 
@@ -21,7 +21,7 @@ export class AuthRegister {
     }
 
     const password = await this.hashProvider.hash(input.password);
-    const role = Role.default();
+    const role = Role.create(input.role);
 
     const user = User.create({
       name: input.name.trim(),

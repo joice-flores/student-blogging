@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { makeListPosts } from '@infrastructure/http/factories/post';
 import { ListPostsDto } from '@application/post/dto/post.dto';
+import { PostPresenter } from '@infrastructure/http/presenters';
 
 export async function list(request: FastifyRequest, reply: FastifyReply) {
   const query = request.query as { limit?: string; skip?: string };
@@ -13,7 +14,7 @@ export async function list(request: FastifyRequest, reply: FastifyReply) {
 
   return reply.send({
     success: true,
-    data: posts,
+    data: PostPresenter.toHTTPList(posts),
     pagination: {
       limit,
       skip,

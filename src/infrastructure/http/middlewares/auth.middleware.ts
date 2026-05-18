@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UserError } from '@shared/errors/user/user-error';
 import { makeTokenProvider } from '@infrastructure/http/factories/auth';
+import { RoleValue } from '@domain/user';
 
 export function makeAuthMiddleware() {
   return async function authMiddleware(
@@ -18,7 +19,11 @@ export function makeAuthMiddleware() {
     try {
       const tokenProvider = makeTokenProvider();
       const payload = tokenProvider.verify(token);
-      request.user = { id: payload.sub, email: payload.email };
+      request.user = {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role
+      };
     } catch {
       throw UserError.unauthorized();
     }
@@ -30,6 +35,7 @@ declare module 'fastify' {
     user?: {
       id: string;
       email: string;
+      role: RoleValue;
     };
   }
 }

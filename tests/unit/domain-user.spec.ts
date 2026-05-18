@@ -1,6 +1,4 @@
-import { User } from '@domain/user/entities/user';
-import { Email } from '@domain/user/value-objects/email';
-import { UserId } from '@domain/user/value-objects/user-id';
+import { Email, Role, ROLES, User, UserId } from '@domain/user';
 
 describe('User domain', () => {
   it('throws when name is empty', () => {
@@ -9,7 +7,8 @@ describe('User domain', () => {
         new User({
           name: ' ',
           email: Email.create('user@example.com'),
-          password: 'secret1'
+          password: 'secret1',
+          role: Role.create(ROLES.STUDENT)
         })
     ).toThrow('Name is required');
   });
@@ -20,7 +19,8 @@ describe('User domain', () => {
         new User({
           name: 'User',
           email: Email.create('user@example.com'),
-          password: '123'
+          password: '123',
+          role: Role.create(ROLES.STUDENT)
         })
     ).toThrow('Password must be at least 6 characters');
   });
@@ -33,7 +33,8 @@ describe('User domain', () => {
       id,
       name: 'User',
       email,
-      password: 'secret1'
+      password: 'secret1',
+      role: Role.create(ROLES.STUDENT)
     });
 
     expect(user.id.equals(id)).toBe(true);
@@ -51,6 +52,7 @@ describe('User domain', () => {
       name: 'User',
       email,
       password: 'secret1',
+      role: Role.create(ROLES.STUDENT),
       createdAt,
       updatedAt
     });
@@ -85,5 +87,21 @@ describe('UserId value object', () => {
     expect(first.getValue()).toBe('user-1');
     expect(first.equals(same)).toBe(true);
     expect(first.equals(other)).toBe(false);
+  });
+});
+
+describe('Role value object', () => {
+  it('creates roles and compares values', () => {
+    const role = Role.create(ROLES.TEACHER);
+    const same = Role.create(ROLES.TEACHER);
+    const other = Role.create(ROLES.STUDENT);
+
+    expect(role.getValue()).toBe(ROLES.TEACHER);
+    expect(role.equals(same)).toBe(true);
+    expect(role.equals(other)).toBe(false);
+  });
+
+  it('throws for invalid role', () => {
+    expect(() => Role.create('invalid-role')).toThrow();
   });
 });

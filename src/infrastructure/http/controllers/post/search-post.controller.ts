@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { makeSearchPosts } from '@infrastructure/http/factories/post';
 import { searchPostSchema } from '@infrastructure/http/controllers/post/post.validation';
 import { validateOrThrow } from '@shared/utils/validation';
+import { PostPresenter } from '@infrastructure/http/presenters';
 
 export async function search(request: FastifyRequest, reply: FastifyReply) {
   const params = validateOrThrow(searchPostSchema, request.query);
@@ -9,6 +10,6 @@ export async function search(request: FastifyRequest, reply: FastifyReply) {
 
   return reply.send({
     success: true,
-    data: posts
+    data: PostPresenter.toHTTPList(posts)
   });
 }

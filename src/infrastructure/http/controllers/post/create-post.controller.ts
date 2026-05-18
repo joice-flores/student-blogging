@@ -4,6 +4,7 @@ import { POSTS } from '@shared/constants/i18n.keys';
 import { makeCreatePost } from '@infrastructure/http/factories/post';
 import { createPostSchema } from '@infrastructure/http/controllers/post/post.validation';
 import { validateOrThrow } from '@shared/utils/validation';
+import { PostPresenter } from '@infrastructure/http/presenters';
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
   const data = validateOrThrow(createPostSchema, request.body);
@@ -12,6 +13,6 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   return reply.status(201).send({
     success: true,
     message: translate(POSTS.SUCCESS.CREATED),
-    data: post
+    data: PostPresenter.toHTTP(post)
   });
 }

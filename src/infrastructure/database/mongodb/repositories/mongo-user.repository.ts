@@ -1,8 +1,5 @@
 import { Collection, Db } from 'mongodb';
-import { User } from '@domain/user/entities/user';
-import { IUserRepository } from '@domain/user/repositories/user.repository';
-import { Email } from '@domain/user/value-objects/email';
-import { UserId } from '@domain/user/value-objects/user-id';
+import { Email, IUserRepository, Role, User, UserId } from '@domain/user';
 import { UserDocument } from '@infrastructure/database/schemas/user.schema';
 
 export class MongoUserRepository implements IUserRepository {
@@ -35,7 +32,7 @@ export class MongoUserRepository implements IUserRepository {
       name: user.name,
       email: user.email.getValue(),
       password: user.password,
-      role: user.role,
+      role: user.role.getValue(),
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };
@@ -53,7 +50,7 @@ export class MongoUserRepository implements IUserRepository {
       name: doc.name,
       email: Email.create(doc.email),
       password: doc.password,
-      role: doc.role,
+      role: Role.create(doc.role),
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt
     });

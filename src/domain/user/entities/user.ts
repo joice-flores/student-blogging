@@ -1,24 +1,32 @@
 import { UserId } from '@domain/user/value-objects/user-id';
 import { Email } from '@domain/user/value-objects/email';
+import { Role, RoleValue } from '@domain/user/value-objects/role';
 
-export type UserRole = 'teacher' | 'student';
+export type UserRole = RoleValue;
 
 export interface UserProps {
   id?: UserId;
   name: string;
   email: Email;
   password: string;
-  role: UserRole;
+  role: Role;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type CreateUserProps = Omit<
+  UserProps,
+  'role' | 'createdAt' | 'updatedAt'
+> & {
+  role?: Role;
+};
 
 export class User {
   private readonly _id: UserId;
   private _name: string;
   private readonly _email: Email;
   private _password: string;
-  private _role: UserRole;
+  private _role: Role;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
@@ -59,7 +67,7 @@ export class User {
     return this._password;
   }
 
-  get role(): UserRole {
+  get role(): Role {
     return this._role;
   }
 
@@ -71,16 +79,16 @@ export class User {
     return this._updatedAt;
   }
 
-  static create(props: UserProps): User {
+  static create(props: CreateUserProps): User {
     return new User({
       id: props.id === undefined ? UserId.create() : props.id,
       name: props.name,
       email: props.email,
       password: props.password,
-      role: props.role,
+      role: props.role ?? Role.default(),
       createdAt: new Date(),
       updatedAt: new Date()
-    } as UserProps);
+    });
   }
 
   static reconstitute(props: UserProps): User {

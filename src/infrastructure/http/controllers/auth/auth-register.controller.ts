@@ -11,8 +11,7 @@ export async function authRegister(
   const result = await makeAuthRegister().execute({
     name: body.name,
     email: body.email,
-    password: body.password,
-    role: body.role
+    password: body.password
   });
 
   return reply.status(201).send(result);
