@@ -26,6 +26,11 @@ export class MongoUserRepository implements IUserRepository {
     return this.toEntity(doc);
   }
 
+  async findAll(): Promise<User[]> {
+    const docs = await this.collection.find({}).toArray();
+    return docs.map(doc => this.toEntity(doc));
+  }
+
   async save(user: User): Promise<void> {
     const doc: UserDocument = {
       _id: user.id.getValue(),

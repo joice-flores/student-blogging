@@ -56,5 +56,9 @@ export const USERS = {
     FORBIDDEN: 'users.errors.forbidden',
     NOT_FOUND: 'users.errors.notFound',
     UNAUTHORIZED: 'users.errors.unauthorized'
+  },
+  SUCCESS: {
+    UPDATED: 'users.success.updated',
+    DELETED: 'users.success.deleted'
   }
 } as const;

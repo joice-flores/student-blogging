@@ -35,6 +35,8 @@ export class Login {
       role: user.role.getValue()
     });
 
+    console.log(`[login] user=${user.email.getValue()} role=${user.role.getValue()}`);
+
     return {
       accessToken,
       user: {

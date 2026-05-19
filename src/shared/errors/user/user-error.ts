@@ -34,14 +34,6 @@ export class UserError extends ErrorBuilder {
       .build();
   }
 
-  static forbidden(): AppError {
-    return this.create()
-      .withI18nKey(USERS.ERRORS.FORBIDDEN)
-      .withStatusCode(403)
-      .withCode(Codes.FORBIDDEN)
-      .build();
-  }
-
   static notFound(): AppError {
     return this.create()
       .withI18nKey(USERS.ERRORS.NOT_FOUND)
@@ -55,6 +47,14 @@ export class UserError extends ErrorBuilder {
       .withI18nKey(USERS.ERRORS.UNAUTHORIZED)
       .withStatusCode(401)
       .withCode(Codes.UNAUTHORIZED)
+      .build();
+  }
+
+  static forbidden(): AppError {
+    return this.create()
+      .withI18nKey(USERS.ERRORS.FORBIDDEN)
+      .withStatusCode(403)
+      .withCode(Codes.FORBIDDEN)
       .build();
   }
 }
