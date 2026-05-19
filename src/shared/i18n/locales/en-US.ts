@@ -27,12 +27,16 @@ export const enUS = {
   users: {
     errors: {
       emailAlreadyInUse: 'Email is already in use',
-      forbidden: 'Forbidden',
+      forbidden: 'You do not have permission to perform this action',
       invalidCredentials: 'Invalid email or password',
       invalidEmail: 'Invalid email',
       invalidRole: 'Invalid role',
       notFound: 'User not found',
       unauthorized: 'User Unauthorized'
+    },
+    success: {
+      updated: 'User updated successfully',
+      deleted: 'User deleted successfully'
     }
   }
 };

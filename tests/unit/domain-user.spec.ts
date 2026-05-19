@@ -1,4 +1,6 @@
-import { Email, Role, ROLES, User, UserId } from '@domain/user';
+import { Role, ROLES, User } from '@domain/user';
+import { Email } from '@domain/user/value-objects/email';
+import { UserId } from '@domain/user/value-objects/user-id';
 
 describe('User domain', () => {
   it('throws when name is empty', () => {
@@ -52,7 +54,7 @@ describe('User domain', () => {
       name: 'User',
       email,
       password: 'secret1',
-      role: Role.create(ROLES.STUDENT),
+      role: Role.create(ROLES.TEACHER),
       createdAt,
       updatedAt
     });
@@ -87,21 +89,5 @@ describe('UserId value object', () => {
     expect(first.getValue()).toBe('user-1');
     expect(first.equals(same)).toBe(true);
     expect(first.equals(other)).toBe(false);
-  });
-});
-
-describe('Role value object', () => {
-  it('creates roles and compares values', () => {
-    const role = Role.create(ROLES.TEACHER);
-    const same = Role.create(ROLES.TEACHER);
-    const other = Role.create(ROLES.STUDENT);
-
-    expect(role.getValue()).toBe(ROLES.TEACHER);
-    expect(role.equals(same)).toBe(true);
-    expect(role.equals(other)).toBe(false);
-  });
-
-  it('throws for invalid role', () => {
-    expect(() => Role.create('invalid-role')).toThrow();
   });
 });

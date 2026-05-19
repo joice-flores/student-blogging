@@ -14,3 +14,30 @@ export type CreateUserOutputDTO = {
   role: RoleValue;
   createdAt: Date;
 };
+
+export interface GetUserByIdInputDTO {
+  id: string;
+}
+
+export interface UserOutputDTO {
+  id: string;
+  name: string;
+  email: string;
+  role: RoleValue;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UpdateUserInputDTO {
+  id: string;
+  requesterId: string;
+  requesterRole: string;
+  name?: string;
+  role?: RoleValue;
+}
+
+export interface DeleteUserInputDTO {
+  id: string;
+  requesterId: string;
+  requesterRole: string;
+}

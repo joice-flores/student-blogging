@@ -4,6 +4,7 @@ export type RegisterInputDTO = {
   name: string;
   email: string;
   password: string;
+  role?: RoleValue;
 };
 
 export type RegisterOutputDTO = {

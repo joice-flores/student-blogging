@@ -4,7 +4,6 @@ import {
   Email,
   IUserRepository,
   Role,
-  RoleValue,
   ROLES,
   User
 } from '@domain/user';
@@ -20,6 +19,7 @@ describe('Auth Use Cases', () => {
       userRepository = {
         findById: jest.fn(),
         findByEmail: jest.fn(),
+        findAll: jest.fn(),
         save: jest.fn(),
         delete: jest.fn()
       };
@@ -39,7 +39,8 @@ describe('Auth Use Cases', () => {
       const result = await useCase.execute({
         name: '  John Doe  ',
         email: 'JOHN@EXAMPLE.COM',
-        password: 'secret123'
+        password: 'secret123',
+        role: ROLES.STUDENT
       });
 
       expect(result.id).toEqual(expect.any(String));
@@ -73,7 +74,8 @@ describe('Auth Use Cases', () => {
         useCase.execute({
           name: 'John',
           email: 'john@example.com',
-          password: 'secret123'
+          password: 'secret123',
+          role: ROLES.STUDENT
         })
       ).rejects.toMatchObject({ statusCode: 409 });
 
@@ -88,7 +90,8 @@ describe('Auth Use Cases', () => {
         useCase.execute({
           name: 'John',
           email: 'invalid-email',
-          password: 'secret123'
+          password: 'secret123',
+          role: ROLES.STUDENT
         })
       ).rejects.toMatchObject({ statusCode: 400 });
 
@@ -105,6 +108,7 @@ describe('Auth Use Cases', () => {
       userRepository = {
         findById: jest.fn(),
         findByEmail: jest.fn(),
+        findAll: jest.fn(),
         save: jest.fn(),
         delete: jest.fn()
       };
