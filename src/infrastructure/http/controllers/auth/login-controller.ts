@@ -10,10 +10,5 @@ export async function login(request: FastifyRequest, reply: FastifyReply) {
     password: body.password
   });
 
-  console.log(
-    'login >>>>>>>>',
-    `[login] user=${result.user.email} role=${result.user.role}`
-  );
-
   return reply.status(200).send(result);
 }

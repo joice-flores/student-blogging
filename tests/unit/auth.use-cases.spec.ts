@@ -1,12 +1,6 @@
 import { AuthRegister, Login, Logout } from '@application/auth';
 import { HashProvider } from '@application/providers/hash-provider';
-import {
-  Email,
-  IUserRepository,
-  Role,
-  ROLES,
-  User
-} from '@domain/user';
+import { Email, IUserRepository, Role, ROLES, User } from '@domain/user';
 import { Argon2HashProvider } from '@infrastructure/providers/argon2-hash-provider';
 import { JwtTokenProvider } from '@infrastructure/providers/jwt-token-provider';
 
@@ -21,6 +15,7 @@ describe('Auth Use Cases', () => {
         findByEmail: jest.fn(),
         findAll: jest.fn(),
         save: jest.fn(),
+        update: jest.fn(),
         delete: jest.fn()
       };
 
@@ -110,6 +105,7 @@ describe('Auth Use Cases', () => {
         findByEmail: jest.fn(),
         findAll: jest.fn(),
         save: jest.fn(),
+        update: jest.fn(),
         delete: jest.fn()
       };
 

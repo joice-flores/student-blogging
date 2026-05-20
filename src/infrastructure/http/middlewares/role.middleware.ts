@@ -14,3 +14,25 @@ export function requireRoles(allowedRoles: RoleValue[]) {
     }
   };
 }
+
+export function requireSelfOrRoles(allowedRoles: RoleValue[]) {
+  return async function selfOrRoleMiddleware(
+    request: FastifyRequest,
+    _reply: FastifyReply
+  ): Promise<void> {
+    const role = request.user?.role;
+
+    if (role && allowedRoles.includes(role)) {
+      return;
+    }
+
+    const params = request.params as { id?: string };
+    const requesterId = request.user?.id;
+
+    if (params.id && requesterId === params.id) {
+      return;
+    }
+
+    throw UserError.forbidden();
+  };
+}

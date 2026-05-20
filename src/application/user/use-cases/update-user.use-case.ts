@@ -1,4 +1,4 @@
-import { IUserRepository, Role, UserId } from '@domain/user';
+import { IUserRepository, Role, ROLES, UserId } from '@domain/user';
 import { UserError } from '@shared/errors/user/user-error';
 import {
   UpdateUserInputDTO,
@@ -9,8 +9,7 @@ export class UpdateUser {
   constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(input: UpdateUserInputDTO): Promise<UserOutputDTO> {
-    const isPrivileged =
-      input.requesterRole === 'teacher' || input.requesterRole === 'admin';
+    const isPrivileged = input.requesterRole === ROLES.ADMIN;
     const isOwnProfile = input.requesterId === input.id;
 
     if (!isPrivileged && !isOwnProfile) {
@@ -32,7 +31,8 @@ export class UpdateUser {
       name: input.name,
       role: input.role ? Role.create(input.role) : undefined
     });
-    await this.userRepository.save(user);
+
+    await this.userRepository.update(user);
 
     return {
       id: user.id.getValue(),

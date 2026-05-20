@@ -14,7 +14,10 @@ export interface UserProps {
   updatedAt?: Date;
 }
 
-export type CreateUserProps = Omit<UserProps, 'role' | 'createdAt' | 'updatedAt'> & {
+export type CreateUserProps = Omit<
+  UserProps,
+  'role' | 'createdAt' | 'updatedAt'
+> & {
   role?: Role;
 };
 
@@ -77,16 +80,31 @@ export class User {
   }
 
   update(props: { name?: string; role?: Role }): void {
-    if (props.name !== undefined) {
-      if (!props.name || props.name.trim().length === 0) {
-        throw new Error('Name is required');
-      }
-      this._name = props.name.trim();
-    }
-    if (props.role !== undefined) {
-      this._role = props.role;
-    }
+    this.applyName(props.name);
+    this.applyRole(props.role);
     this._updatedAt = new Date();
+  }
+
+  private applyName(name?: string): void {
+    if (name === undefined) {
+      return;
+    }
+    this.ensureName(name);
+    this._name = name.trim();
+  }
+
+  private ensureName(name: string): void {
+    if (!name || name.trim().length === 0) {
+      throw new Error('Name is required');
+    }
+  }
+
+  private applyRole(role?: Role): void {
+    if (role === undefined) {
+      return;
+    }
+
+    this._role = role;
   }
 
   static create(props: CreateUserProps): User {

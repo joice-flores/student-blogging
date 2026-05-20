@@ -45,6 +45,19 @@ export class MongoUserRepository implements IUserRepository {
     await this.collection.replaceOne({ _id: doc._id }, doc, { upsert: true });
   }
 
+  async update(user: User): Promise<void> {
+    await this.collection.updateOne(
+      { _id: user.id.getValue() },
+      {
+        $set: {
+          name: user.name,
+          role: user.role.getValue(),
+          updatedAt: user.updatedAt
+        }
+      }
+    );
+  }
+
   async delete(id: UserId): Promise<void> {
     await this.collection.deleteOne({ _id: id.getValue() });
   }

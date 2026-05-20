@@ -31,7 +31,7 @@ export interface UserOutputDTO {
 export interface UpdateUserInputDTO {
   id: string;
   requesterId: string;
-  requesterRole: string;
+  requesterRole: RoleValue;
   name?: string;
   role?: RoleValue;
 }
@@ -39,5 +39,5 @@ export interface UpdateUserInputDTO {
 export interface DeleteUserInputDTO {
   id: string;
   requesterId: string;
-  requesterRole: string;
+  requesterRole: RoleValue;
 }

@@ -21,7 +21,7 @@ export class AuthRegister {
     }
 
     const password = await this.hashProvider.hash(input.password);
-    const role = input.role ? Role.create(input.role) : Role.default();
+    const role = Role.default();
 
     const user = User.create({
       name: input.name.trim(),
