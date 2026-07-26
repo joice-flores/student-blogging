@@ -1,10 +1,10 @@
 import { ILessonPlanRepository, LessonPlanId } from '@domain/lesson-plan';
-import { ROLES } from '@domain/user';
 import {
   GetLessonPlanByIdDto,
   LessonPlanDto
 } from '@application/lesson-plan/dto/lesson-plan.dto';
 import { toLessonPlanDto } from '@application/lesson-plan/mappers/lesson-plan.mapper';
+import { ensureLessonPlanAccess } from '@application/lesson-plan/policies/lesson-plan-access.policy';
 import { LessonPlanError } from '@shared/errors/lesson-plan/lesson-plan-error';
 
 export class GetLessonPlanById {
@@ -19,16 +19,11 @@ export class GetLessonPlanById {
       throw LessonPlanError.notFound(input.id);
     }
 
-    this.ensureCanAccess(lessonPlan.belongsToTeacher(input.teacherId), input);
+    ensureLessonPlanAccess({
+      requesterRole: input.requesterRole,
+      isOwner: lessonPlan.belongsToTeacher(input.teacherId)
+    });
 
     return toLessonPlanDto(lessonPlan);
-  }
-
-  private ensureCanAccess(isOwner: boolean, input: GetLessonPlanByIdDto): void {
-    const isAdmin = input.requesterRole === ROLES.ADMIN;
-
-    if (!isAdmin && !isOwner) {
-      throw LessonPlanError.forbidden();
-    }
   }
 }

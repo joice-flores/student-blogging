@@ -1,6 +1,6 @@
 import { ILessonPlanRepository, LessonPlanId } from '@domain/lesson-plan';
-import { ROLES } from '@domain/user';
 import { DeleteLessonPlanDto } from '@application/lesson-plan/dto/lesson-plan.dto';
+import { ensureLessonPlanAccess } from '@application/lesson-plan/policies/lesson-plan-access.policy';
 import { LessonPlanError } from '@shared/errors/lesson-plan/lesson-plan-error';
 
 export class DeleteLessonPlan {
@@ -14,12 +14,10 @@ export class DeleteLessonPlan {
       throw LessonPlanError.notFound(input.id);
     }
 
-    const isAdmin = input.requesterRole === ROLES.ADMIN;
-    const isOwner = lessonPlan.belongsToTeacher(input.teacherId);
-
-    if (!isAdmin && !isOwner) {
-      throw LessonPlanError.forbidden();
-    }
+    ensureLessonPlanAccess({
+      requesterRole: input.requesterRole,
+      isOwner: lessonPlan.belongsToTeacher(input.teacherId)
+    });
 
     await this.lessonPlanRepository.delete(lessonPlanId);
   }
