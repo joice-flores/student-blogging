@@ -19,15 +19,17 @@ export type LessonPlanSectionsDto = {
   readonly resources: readonly string[];
 };
 
-export type LessonPlanDto = Partial<CreateLessonPlanDto> & LessonPlanSectionsDto & {
-  readonly id: string;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-};
+export type LessonPlanDto = Partial<CreateLessonPlanDto> &
+  LessonPlanSectionsDto & {
+    readonly id: string;
+    readonly createdAt: Date;
+    readonly updatedAt: Date;
+  };
 
-export type SaveLessonPlanDto = Partial<CreateLessonPlanDto> & LessonPlanSectionsDto & {
-  readonly requesterRole: string;
-};
+export type SaveLessonPlanDto = Partial<CreateLessonPlanDto> &
+  LessonPlanSectionsDto & {
+    readonly requesterRole: string;
+  };
 
 export type ListLessonPlansDto = {
   readonly teacherId: string;

@@ -34,6 +34,62 @@ export class LessonPlanError extends ErrorBuilder {
       .build();
   }
 
+  static invalidTeacherId(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_TEACHER_ID)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidObjectives(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_OBJECTIVES)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidContent(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_CONTENT)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidMethodology(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_METHODOLOGY)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidSchedule(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_SCHEDULE)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidAssessment(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_ASSESSMENT)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
+  static invalidResources(): AppError {
+    return this.create()
+      .withI18nKey(LESSON_PLANS.ERRORS.INVALID_RESOURCES)
+      .withStatusCode(400)
+      .withCode(Codes.VALIDATION_ERROR)
+      .build();
+  }
+
   static notFound(id?: string): AppError {
     return this.create()
       .withI18nKey(LESSON_PLANS.ERRORS.NOT_FOUND)

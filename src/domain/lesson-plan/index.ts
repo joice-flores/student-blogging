@@ -8,6 +8,9 @@ export {
   Subject,
   ALLOWED_SUBJECTS
 } from '@domain/lesson-plan/value-objects/subject';
+export type { AllowedSubject } from '@domain/lesson-plan/value-objects/subject';
 export { Grade, ALLOWED_GRADES } from '@domain/lesson-plan/value-objects/grade';
+export type { AllowedGrade } from '@domain/lesson-plan/value-objects/grade';
 export { Theme } from '@domain/lesson-plan/value-objects/theme';
 export { ScheduleStep } from '@domain/lesson-plan/value-objects/schedule-step';
+export type { ScheduleStepProps } from '@domain/lesson-plan/value-objects/schedule-step';

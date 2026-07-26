@@ -39,6 +39,8 @@ export class LessonPlanPresenter {
   }
 
   static toHTTPList(lessonPlans: LessonPlanDto[]): LessonPlanHttp[] {
-    return lessonPlans.map(lessonPlan => LessonPlanPresenter.toHTTP(lessonPlan));
+    return lessonPlans.map(lessonPlan =>
+      LessonPlanPresenter.toHTTP(lessonPlan)
+    );
   }
 }

@@ -1,8 +1,5 @@
 import { z } from 'zod';
-import {
-  ALLOWED_GRADES,
-  ALLOWED_SUBJECTS
-} from '@domain/lesson-plan';
+import { ALLOWED_GRADES, ALLOWED_SUBJECTS } from '@domain/lesson-plan';
 
 export const generateLessonPlanSchema = z.object({
   subject: z.enum(ALLOWED_SUBJECTS),

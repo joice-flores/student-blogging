@@ -3,6 +3,7 @@ import { Subject } from '@domain/lesson-plan/value-objects/subject';
 import { Grade } from '@domain/lesson-plan/value-objects/grade';
 import { Theme } from '@domain/lesson-plan/value-objects/theme';
 import { ScheduleStep } from '@domain/lesson-plan/value-objects/schedule-step';
+import { LessonPlanError } from '@shared/errors/lesson-plan/lesson-plan-error';
 
 export type LessonPlanProps = {
   id?: LessonPlanId;
@@ -36,17 +37,35 @@ export class LessonPlan {
   private readonly _updatedAt: Date;
 
   private constructor(props: LessonPlanProps) {
+    const teacherId = props.teacherId.trim();
+    const objectives = props.objectives
+      .map(item => item.trim())
+      .filter(Boolean);
+    const content = props.content.trim();
+    const methodology = props.methodology.trim();
+    const assessment = props.assessment.trim();
+    const resources = props.resources.map(item => item.trim()).filter(Boolean);
+    const schedule = [...props.schedule];
+
+    this.ensureTeacherId(teacherId);
+    this.ensureObjectives(objectives);
+    this.ensureContent(content);
+    this.ensureMethodology(methodology);
+    this.ensureSchedule(schedule);
+    this.ensureAssessment(assessment);
+    this.ensureResources(resources);
+
     this._id = props.id || LessonPlanId.create();
     this._subject = props.subject;
     this._grade = props.grade;
     this._theme = props.theme;
-    this._objectives = [...props.objectives];
-    this._content = props.content;
-    this._methodology = props.methodology;
-    this._schedule = [...props.schedule];
-    this._assessment = props.assessment;
-    this._resources = [...props.resources];
-    this._teacherId = props.teacherId;
+    this._objectives = objectives;
+    this._content = content;
+    this._methodology = methodology;
+    this._schedule = schedule;
+    this._assessment = assessment;
+    this._resources = resources;
+    this._teacherId = teacherId;
     this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || new Date();
   }
@@ -113,5 +132,47 @@ export class LessonPlan {
 
   belongsToTeacher(teacherId: string): boolean {
     return this._teacherId === teacherId;
+  }
+
+  private ensureTeacherId(teacherId: string): void {
+    if (!teacherId) {
+      throw LessonPlanError.invalidTeacherId();
+    }
+  }
+
+  private ensureObjectives(objectives: string[]): void {
+    if (objectives.length === 0) {
+      throw LessonPlanError.invalidObjectives();
+    }
+  }
+
+  private ensureContent(content: string): void {
+    if (!content) {
+      throw LessonPlanError.invalidContent();
+    }
+  }
+
+  private ensureMethodology(methodology: string): void {
+    if (!methodology) {
+      throw LessonPlanError.invalidMethodology();
+    }
+  }
+
+  private ensureSchedule(schedule: ScheduleStep[]): void {
+    if (schedule.length === 0) {
+      throw LessonPlanError.invalidSchedule();
+    }
+  }
+
+  private ensureAssessment(assessment: string): void {
+    if (!assessment) {
+      throw LessonPlanError.invalidAssessment();
+    }
+  }
+
+  private ensureResources(resources: string[]): void {
+    if (resources.length === 0) {
+      throw LessonPlanError.invalidResources();
+    }
   }
 }

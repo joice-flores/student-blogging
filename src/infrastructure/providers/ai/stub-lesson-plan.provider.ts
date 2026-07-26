@@ -35,11 +35,7 @@ export class StubLessonPlanProvider implements AiLessonPlanProvider {
       ],
       assessment:
         'Observação formativa durante a atividade e pergunta de saída oral.',
-      resources: [
-        'Quadro branco',
-        'Projetor',
-        'Material impresso de apoio'
-      ]
+      resources: ['Quadro branco', 'Projetor', 'Material impresso de apoio']
     };
   }
 }
