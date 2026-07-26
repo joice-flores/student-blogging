@@ -12,7 +12,11 @@ export class ListLessonPlans {
   async execute(input: ListLessonPlansDto): Promise<ListLessonPlansResultDto> {
     const query = {
       limit: input.limit,
-      skip: input.skip
+      skip: input.skip,
+      sortBy: input.sortBy,
+      sortOrder: input.sortOrder,
+      subject: input.subject,
+      grade: input.grade
     };
 
     const result =

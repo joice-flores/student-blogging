@@ -136,7 +136,14 @@ describe('LessonPlan Use Cases', () => {
 
       expect(lessonPlanRepository.findByTeacherId).toHaveBeenCalledWith(
         'teacher-1',
-        { limit: 10, skip: 0 }
+        {
+          limit: 10,
+          skip: 0,
+          sortBy: undefined,
+          sortOrder: undefined,
+          subject: undefined,
+          grade: undefined
+        }
       );
       expect(lessonPlanRepository.findAll).not.toHaveBeenCalled();
       expect(result.total).toBe(1);
@@ -163,7 +170,11 @@ describe('LessonPlan Use Cases', () => {
 
       expect(lessonPlanRepository.findAll).toHaveBeenCalledWith({
         limit: 20,
-        skip: 0
+        skip: 0,
+        sortBy: undefined,
+        sortOrder: undefined,
+        subject: undefined,
+        grade: undefined
       });
       expect(lessonPlanRepository.findByTeacherId).not.toHaveBeenCalled();
       expect(result.total).toBe(2);

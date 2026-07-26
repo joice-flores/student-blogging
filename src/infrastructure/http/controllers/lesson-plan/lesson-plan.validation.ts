@@ -24,7 +24,15 @@ export const saveLessonPlanSchema = z.object({
   resources: z.array(z.string().trim().min(1)).min(1)
 });
 
+export const lessonPlanIdParamsSchema = z.object({
+  id: z.string().trim().min(1)
+});
+
 export const listLessonPlansQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
-  skip: z.coerce.number().int().min(0).default(0)
+  skip: z.coerce.number().int().min(0).default(0),
+  sortBy: z.enum(['createdAt', 'updatedAt', 'subject', 'grade']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+  subject: z.enum(ALLOWED_SUBJECTS).optional(),
+  grade: z.enum(ALLOWED_GRADES).optional()
 });

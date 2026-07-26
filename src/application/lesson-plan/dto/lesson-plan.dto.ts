@@ -55,6 +55,10 @@ export type ListLessonPlansDto = {
   readonly requesterRole: RoleValue;
   readonly limit: number;
   readonly skip: number;
+  readonly sortBy?: 'createdAt' | 'updatedAt' | 'subject' | 'grade';
+  readonly sortOrder?: 'asc' | 'desc';
+  readonly subject?: string;
+  readonly grade?: string;
 };
 
 export type ListLessonPlansResultDto = {

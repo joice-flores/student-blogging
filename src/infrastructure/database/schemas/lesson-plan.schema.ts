@@ -1,20 +1,20 @@
 export type ScheduleStepDocument = {
-  duration: string;
-  description: string;
+  readonly duration: string;
+  readonly description: string;
 };
 
 export type LessonPlanDocument = {
-  _id: string;
-  subject: string;
-  grade: string;
-  theme: string;
-  objectives: string[];
-  content: string;
-  methodology: string;
-  schedule: ScheduleStepDocument[];
-  assessment: string;
-  resources: string[];
-  teacherId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  readonly _id: string;
+  readonly subject: string;
+  readonly grade: string;
+  readonly theme: string;
+  readonly objectives: string[];
+  readonly content: string;
+  readonly methodology: string;
+  readonly schedule: ScheduleStepDocument[];
+  readonly assessment: string;
+  readonly resources: string[];
+  readonly teacherId: string;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 };

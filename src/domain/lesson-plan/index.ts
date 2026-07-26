@@ -3,6 +3,10 @@ export {
   ILessonPlanRepository,
   ListLessonPlansQuery
 } from '@domain/lesson-plan/repositories/lesson-plan.repository';
+export type {
+  LessonPlanSortBy,
+  LessonPlanSortOrder
+} from '@domain/lesson-plan/repositories/lesson-plan.repository';
 export { LessonPlanId } from '@domain/lesson-plan/value-objects/lesson-plan-id';
 export {
   Subject,

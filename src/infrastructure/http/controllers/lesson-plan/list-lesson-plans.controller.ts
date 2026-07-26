@@ -15,7 +15,11 @@ export async function list(request: FastifyRequest, reply: FastifyReply) {
     teacherId: request.user.id,
     requesterRole: request.user.role,
     limit: query.limit,
-    skip: query.skip
+    skip: query.skip,
+    sortBy: query.sortBy,
+    sortOrder: query.sortOrder,
+    subject: query.subject,
+    grade: query.grade
   });
 
   return reply.status(200).send({
@@ -25,7 +29,13 @@ export async function list(request: FastifyRequest, reply: FastifyReply) {
       limit: query.limit,
       skip: query.skip,
       total,
-      hasMore: query.skip + query.limit < total
+      hasMore: query.skip + query.limit < total,
+      sortBy: query.sortBy ?? 'createdAt',
+      sortOrder: query.sortOrder ?? 'desc',
+      filters: {
+        subject: query.subject,
+        grade: query.grade
+      }
     }
   });
 }
