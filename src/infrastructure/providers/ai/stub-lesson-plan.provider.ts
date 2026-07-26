@@ -114,19 +114,19 @@ export class StubLessonPlanProvider implements AiLessonPlanProvider {
   }
 
   private isValidResponse(value: StubModelResponse): boolean {
-    return (
-      Array.isArray(value.objectives) &&
-      value.objectives.length > 0 &&
-      typeof value.content === 'string' &&
-      value.content.trim().length > 0 &&
-      typeof value.methodology === 'string' &&
-      value.methodology.trim().length > 0 &&
-      Array.isArray(value.schedule) &&
-      value.schedule.length > 0 &&
-      typeof value.assessment === 'string' &&
-      value.assessment.trim().length > 0 &&
-      Array.isArray(value.resources) &&
+    return [
+      Array.isArray(value.objectives),
+      value.objectives.length > 0,
+      typeof value.content === 'string',
+      value.content.trim().length > 0,
+      typeof value.methodology === 'string',
+      value.methodology.trim().length > 0,
+      Array.isArray(value.schedule),
+      value.schedule.length > 0,
+      typeof value.assessment === 'string',
+      value.assessment.trim().length > 0,
+      Array.isArray(value.resources),
       value.resources.length > 0
-    );
+    ].every(Boolean);
   }
 }

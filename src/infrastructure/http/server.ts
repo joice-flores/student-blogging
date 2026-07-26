@@ -6,9 +6,10 @@ import { userRoutes } from '@infrastructure/http/routes/user';
 import { lessonPlanRoutes } from '@infrastructure/http/routes/lesson-plan';
 import { errorHandler } from '@infrastructure/http/middlewares/error-handler.middleware';
 import { TechnicalTelemetryPort } from '@infrastructure/providers/telemetry';
+import { env } from '@shared/env';
 
 function createServer(prometheusTelemetry: TechnicalTelemetryPort) {
-  const app = fastify({ logger: true });
+  const app = fastify({ logger: env.NODE_ENV !== 'test' });
 
   app.register(cors, {
     origin: '*',

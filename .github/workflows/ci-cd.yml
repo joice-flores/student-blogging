@@ -14,8 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: test
-      MONGODB_URI: mongodb://localhost:27017/student-blogging
-      JWT_SECRET: ci-jwt-secret
+      JWT_SECRET: ci-test-jwt-secret-with-at-least-32-characters
 
     services:
       mongodb:

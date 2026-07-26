@@ -50,7 +50,9 @@ function validateEnv(): Env {
 
   environment = result.data;
 
-  console.log(translate(ENVIRONMENT.ZOD.SUCCESS.ENV_VALIDATED));
+  if (environment.NODE_ENV === 'development') {
+    console.log(translate(ENVIRONMENT.ZOD.SUCCESS.ENV_VALIDATED));
+  }
 
   return environment;
 }
