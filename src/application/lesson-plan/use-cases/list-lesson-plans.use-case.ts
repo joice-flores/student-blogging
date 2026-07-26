@@ -1,16 +1,15 @@
 import { ILessonPlanRepository } from '@domain/lesson-plan';
 import { ROLES } from '@domain/user';
 import {
-  LessonPlanDto,
-  ListLessonPlansDto
+  ListLessonPlansDto,
+  ListLessonPlansResultDto
 } from '@application/lesson-plan/dto/lesson-plan.dto';
+import { toLessonPlanDto } from '@application/lesson-plan/mappers/lesson-plan.mapper';
 
 export class ListLessonPlans {
   constructor(private readonly lessonPlanRepository: ILessonPlanRepository) {}
 
-  async execute(
-    input: ListLessonPlansDto
-  ): Promise<{ lessonPlans: LessonPlanDto[]; total: number }> {
+  async execute(input: ListLessonPlansDto): Promise<ListLessonPlansResultDto> {
     const query = {
       limit: input.limit,
       skip: input.skip
@@ -26,21 +25,7 @@ export class ListLessonPlans {
 
     return {
       total: result.total,
-      lessonPlans: result.lessonPlans.map(lessonPlan => ({
-        id: lessonPlan.id.toString(),
-        subject: lessonPlan.subject.getValue(),
-        grade: lessonPlan.grade.getValue(),
-        theme: lessonPlan.theme.getValue(),
-        objectives: [...lessonPlan.objectives],
-        content: lessonPlan.content,
-        methodology: lessonPlan.methodology,
-        schedule: lessonPlan.schedule.map(step => step.toObject()),
-        assessment: lessonPlan.assessment,
-        resources: [...lessonPlan.resources],
-        teacherId: lessonPlan.teacherId,
-        createdAt: lessonPlan.createdAt,
-        updatedAt: lessonPlan.updatedAt
-      }))
+      lessonPlans: result.lessonPlans.map(toLessonPlanDto)
     };
   }
 }

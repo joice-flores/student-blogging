@@ -15,8 +15,7 @@ export async function save(request: FastifyRequest, reply: FastifyReply) {
   const data = validateOrThrow(saveLessonPlanSchema, request.body);
   const lessonPlan = await makeSaveLessonPlan().execute({
     ...data,
-    teacherId: request.user.id,
-    requesterRole: request.user.role
+    teacherId: request.user.id
   });
 
   return reply.status(201).send({

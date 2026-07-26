@@ -1,6 +1,6 @@
 import {
-  LessonPlan,
   Grade,
+  LessonPlan,
   ScheduleStep,
   Subject,
   Theme
@@ -9,6 +9,7 @@ import {
   CreateLessonPlanDto,
   LessonPlanDto
 } from '@application/lesson-plan/dto/lesson-plan.dto';
+import { toLessonPlanDto } from '@application/lesson-plan/mappers/lesson-plan.mapper';
 import { AiLessonPlanProvider } from '@application/providers/ai-lesson-plan-provider';
 
 export class GenerateLessonPlan {
@@ -38,20 +39,6 @@ export class GenerateLessonPlan {
       teacherId: input.teacherId
     });
 
-    return {
-      id: lessonPlan.id.toString(),
-      subject: lessonPlan.subject.getValue(),
-      grade: lessonPlan.grade.getValue(),
-      theme: lessonPlan.theme.getValue(),
-      objectives: [...lessonPlan.objectives],
-      content: lessonPlan.content,
-      methodology: lessonPlan.methodology,
-      schedule: lessonPlan.schedule.map(step => step.toObject()),
-      assessment: lessonPlan.assessment,
-      resources: [...lessonPlan.resources],
-      teacherId: lessonPlan.teacherId,
-      createdAt: lessonPlan.createdAt,
-      updatedAt: lessonPlan.updatedAt
-    };
+    return toLessonPlanDto(lessonPlan);
   }
 }

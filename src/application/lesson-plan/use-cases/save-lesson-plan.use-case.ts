@@ -10,6 +10,7 @@ import {
   LessonPlanDto,
   SaveLessonPlanDto
 } from '@application/lesson-plan/dto/lesson-plan.dto';
+import { toLessonPlanDto } from '@application/lesson-plan/mappers/lesson-plan.mapper';
 
 export class SaveLessonPlan {
   constructor(private readonly lessonPlanRepository: ILessonPlanRepository) {}
@@ -30,20 +31,6 @@ export class SaveLessonPlan {
 
     await this.lessonPlanRepository.create(lessonPlan);
 
-    return {
-      id: lessonPlan.id.toString(),
-      subject: lessonPlan.subject.getValue(),
-      grade: lessonPlan.grade.getValue(),
-      theme: lessonPlan.theme.getValue(),
-      objectives: [...lessonPlan.objectives],
-      content: lessonPlan.content,
-      methodology: lessonPlan.methodology,
-      schedule: lessonPlan.schedule.map(step => step.toObject()),
-      assessment: lessonPlan.assessment,
-      resources: [...lessonPlan.resources],
-      teacherId: lessonPlan.teacherId,
-      createdAt: lessonPlan.createdAt,
-      updatedAt: lessonPlan.updatedAt
-    };
+    return toLessonPlanDto(lessonPlan);
   }
 }

@@ -4,6 +4,7 @@ import {
   GetLessonPlanByIdDto,
   LessonPlanDto
 } from '@application/lesson-plan/dto/lesson-plan.dto';
+import { toLessonPlanDto } from '@application/lesson-plan/mappers/lesson-plan.mapper';
 import { LessonPlanError } from '@shared/errors/lesson-plan/lesson-plan-error';
 
 export class GetLessonPlanById {
@@ -18,27 +19,16 @@ export class GetLessonPlanById {
       throw LessonPlanError.notFound(input.id);
     }
 
+    this.ensureCanAccess(lessonPlan.belongsToTeacher(input.teacherId), input);
+
+    return toLessonPlanDto(lessonPlan);
+  }
+
+  private ensureCanAccess(isOwner: boolean, input: GetLessonPlanByIdDto): void {
     const isAdmin = input.requesterRole === ROLES.ADMIN;
-    const isOwner = lessonPlan.belongsToTeacher(input.teacherId);
 
     if (!isAdmin && !isOwner) {
       throw LessonPlanError.forbidden();
     }
-
-    return {
-      id: lessonPlan.id.toString(),
-      subject: lessonPlan.subject.getValue(),
-      grade: lessonPlan.grade.getValue(),
-      theme: lessonPlan.theme.getValue(),
-      objectives: [...lessonPlan.objectives],
-      content: lessonPlan.content,
-      methodology: lessonPlan.methodology,
-      schedule: lessonPlan.schedule.map(step => step.toObject()),
-      assessment: lessonPlan.assessment,
-      resources: [...lessonPlan.resources],
-      teacherId: lessonPlan.teacherId,
-      createdAt: lessonPlan.createdAt,
-      updatedAt: lessonPlan.updatedAt
-    };
   }
 }
