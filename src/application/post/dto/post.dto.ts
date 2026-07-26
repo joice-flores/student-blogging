@@ -1,15 +1,15 @@
 export type CreatePostDto = {
-  title: string;
-  content: string;
-  author: string;
+  readonly title: string;
+  readonly content: string;
+  readonly author: string;
 };
 
-export type UpdatePostDto = Partial<CreatePostDto> & { id: string };
+export type UpdatePostDto = Partial<CreatePostDto> & { readonly id: string };
 
-export type DeletePostDto = { id: string };
+export type DeletePostDto = { readonly id: string };
 
-export type GetPostByIdDto = { id: string };
+export type GetPostByIdDto = { readonly id: string };
 
-export type SearchPostsDto = { query: string };
+export type SearchPostsDto = { readonly query: string };
 
-export type ListPostsDto = { limit: number; skip: number };
+export type ListPostsDto = { readonly limit: number; readonly skip: number };

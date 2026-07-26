@@ -62,3 +62,21 @@ export const USERS = {
     DELETED: 'users.success.deleted'
   }
 } as const;
+
+export const LESSON_PLANS = {
+  ERRORS: {
+    INVALID_SUBJECT: 'lessonPlans.errors.invalidSubject',
+    INVALID_GRADE: 'lessonPlans.errors.invalidGrade',
+    INVALID_THEME: 'lessonPlans.errors.invalidTheme',
+    INVALID_SCHEDULE_STEP: 'lessonPlans.errors.invalidScheduleStep',
+    NOT_FOUND: 'lessonPlans.errors.notFound',
+    FORBIDDEN: 'lessonPlans.errors.forbidden',
+    CONFLICT: 'lessonPlans.errors.conflict',
+    AI_PROVIDER_UNAVAILABLE: 'lessonPlans.errors.aiProviderUnavailable'
+  },
+  SUCCESS: {
+    GENERATED: 'lessonPlans.success.generated',
+    SAVED: 'lessonPlans.success.saved',
+    DELETED: 'lessonPlans.success.deleted'
+  }
+} as const;

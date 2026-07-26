@@ -38,5 +38,22 @@ export const enUS = {
       updated: 'User updated successfully',
       deleted: 'User deleted successfully'
     }
+  },
+  lessonPlans: {
+    errors: {
+      invalidSubject: 'Invalid subject',
+      invalidGrade: 'Invalid grade',
+      invalidTheme: 'Theme must have at least 3 characters',
+      invalidScheduleStep: 'Invalid schedule step',
+      notFound: 'Lesson plan not found',
+      forbidden: 'You do not have permission to access this lesson plan',
+      conflict: 'Lesson plan conflict',
+      aiProviderUnavailable: 'AI provider is unavailable'
+    },
+    success: {
+      generated: 'Lesson plan generated successfully',
+      saved: 'Lesson plan saved successfully',
+      deleted: 'Lesson plan deleted successfully'
+    }
   }
 };

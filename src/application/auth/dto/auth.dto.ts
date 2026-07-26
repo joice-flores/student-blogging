@@ -1,31 +1,31 @@
 import { RoleValue } from '@domain/user';
 
 export type RegisterInputDTO = {
-  name: string;
-  email: string;
-  password: string;
-  role?: RoleValue;
+  readonly name: string;
+  readonly email: string;
+  readonly password: string;
+  readonly role?: RoleValue;
 };
 
 export type RegisterOutputDTO = {
-  id: string;
-  name: string;
-  email: string;
-  role: RoleValue;
-  createdAt: Date;
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly role: RoleValue;
+  readonly createdAt: Date;
 };
 
 export type LoginInputDTO = {
-  email: string;
-  password: string;
+  readonly email: string;
+  readonly password: string;
 };
 
 export type LoginOutputDTO = {
-  accessToken: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: RoleValue;
+  readonly accessToken: string;
+  readonly user: {
+    readonly id: string;
+    readonly name: string;
+    readonly email: string;
+    readonly role: RoleValue;
   };
 };

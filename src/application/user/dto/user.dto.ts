@@ -1,43 +1,43 @@
 import { RoleValue } from '@domain/user';
 
 export type CreateUserInputDTO = {
-  name: string;
-  email: string;
-  password: string;
-  role: RoleValue;
+  readonly name: string;
+  readonly email: string;
+  readonly password: string;
+  readonly role: RoleValue;
 };
 
 export type CreateUserOutputDTO = {
-  id: string;
-  name: string;
-  email: string;
-  role: RoleValue;
-  createdAt: Date;
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly role: RoleValue;
+  readonly createdAt: Date;
 };
 
 export interface GetUserByIdInputDTO {
-  id: string;
+  readonly id: string;
 }
 
 export interface UserOutputDTO {
-  id: string;
-  name: string;
-  email: string;
-  role: RoleValue;
-  createdAt: Date;
-  updatedAt: Date;
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly role: RoleValue;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }
 
 export interface UpdateUserInputDTO {
-  id: string;
-  requesterId: string;
-  requesterRole: RoleValue;
-  name?: string;
-  role?: RoleValue;
+  readonly id: string;
+  readonly requesterId: string;
+  readonly requesterRole: RoleValue;
+  readonly name?: string;
+  readonly role?: RoleValue;
 }
 
 export interface DeleteUserInputDTO {
-  id: string;
-  requesterId: string;
-  requesterRole: RoleValue;
+  readonly id: string;
+  readonly requesterId: string;
+  readonly requesterRole: RoleValue;
 }
