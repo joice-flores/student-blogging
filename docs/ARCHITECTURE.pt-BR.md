@@ -74,3 +74,33 @@ Utilitários e configurações que são acessados em diversas camadas.
 - **Constantes**: Chaves de configuração e literais globais.
 - **i18n**: Configurações de múltiplos idiomas.
 - **Erros**: Estruturas de erro específicas do sistema.
+
+### 5. Observabilidade (Regras de Fronteira)
+
+A instrumentação de observabilidade deve estar estritamente contida na **Camada de Infraestrutura**.
+
+#### Responsabilidades
+
+- **Camada de Domínio**: nunca deve possuir dependências de telemetria ou bibliotecas externas como Prometheus.
+- **Camada de Aplicação**: deve depender apenas de abstrações de telemetria, como `TelemetryPort`, para disparar métricas de negócio.
+- **Camada de Infraestrutura**: implementa o adapter concreto e o registry, como `PrometheusTelemetry` e `PrometheusMetricsRegistry`.
+- **Composition Root**: `main.ts` instancia o adapter de telemetria e injeta no bootstrap do servidor HTTP.
+
+#### Categorias de métricas
+
+- **Métricas de negócio**: disparadas pelos casos de uso após operações bem-sucedidas.
+- **Métricas técnicas HTTP**: disparadas por hooks do Fastify, como `onRequest` e `onResponse`.
+- **Endpoint de scrape**: exposto via `GET /metrics` e alimentado pelo registry do Prometheus.
+
+#### Regras de labels e nomenclatura
+
+- Priorizar labels de baixa cardinalidade.
+- Labels técnicas permitidas: `method`, `route`, `status_code`.
+- Nomes de métricas devem seguir convenção consistente, por exemplo:
+  - contadores: `*_total`
+  - histogramas: `*_seconds`
+
+#### Fluxo esperado
+
+`rota -> controller -> caso de uso -> porta de telemetria` para eventos de negócio  
+`onRequest/onResponse -> PrometheusTelemetry -> registry` para métricas HTTP

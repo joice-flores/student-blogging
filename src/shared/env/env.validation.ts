@@ -8,6 +8,7 @@ const envSchema = z.object({
     .enum(['development', 'production', 'test'])
     .default('development'),
   PORT: z.coerce.number().default(3000),
+  HOST: z.string().min(7).max(7).default('0.0.0.0'),
   DEFAULT_LANGUAGE: z.enum(['pt-BR', 'en-US']).default('en-US'),
   MONGODB_URI: z.url({ message: translate(ENVIRONMENT.MONGODB.ERRORS.URI) }),
   MONGO_INITDB_DATABASE: z.string(),

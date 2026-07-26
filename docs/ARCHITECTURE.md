@@ -74,3 +74,33 @@ Utilities and configurations that can be used across multiple layers.
 - **Constants**: Global magic strings and configuration keys.
 - **i18n**: Multi-language support configuration and dictionaries.
 - **Errors**: Domain-specific error templates.
+
+### 5. Observability (Boundary Rules)
+
+Observability instrumentation is strictly confined to the **Infrastructure Layer**.
+
+#### Responsibilities
+
+- **Domain Layer**: must never reference telemetry libraries such as Prometheus.
+- **Application Layer**: must depend only on telemetry abstractions, such as `TelemetryPort`, to emit business metrics.
+- **Infrastructure Layer**: implements the concrete telemetry adapter and registry, such as `PrometheusTelemetry` and `PrometheusMetricsRegistry`.
+- **Composition Root**: `main.ts` instantiates the telemetry adapter and injects it into the HTTP server bootstrap.
+
+#### Metric categories
+
+- **Business metrics**: emitted by use cases after successful domain/application operations.
+- **Technical HTTP metrics**: emitted by Fastify hooks such as `onRequest` and `onResponse`.
+- **Scrape endpoint**: exposed through `GET /metrics` and backed by the Prometheus registry.
+
+#### Label and naming rules
+
+- Prefer low-cardinality labels only.
+- Allowed technical labels: `method`, `route`, `status_code`.
+- Metric names should follow a consistent prefix and suffix convention, such as:
+  - counters: `*_total`
+  - histograms: `*_seconds`
+
+#### Expected flow
+
+`route -> controller -> use case -> telemetry port` for business events  
+`onRequest/onResponse -> PrometheusTelemetry -> registry` for HTTP metrics

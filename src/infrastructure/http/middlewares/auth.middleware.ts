@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UserError } from '@shared/errors/user/user-error';
 import { makeTokenProvider } from '@infrastructure/http/factories/auth';
-import { RoleValue } from '@domain/user';
 
 export function makeAuthMiddleware() {
   return async function authMiddleware(
@@ -28,14 +27,4 @@ export function makeAuthMiddleware() {
       throw UserError.unauthorized();
     }
   };
-}
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: {
-      id: string;
-      email: string;
-      role: RoleValue;
-    };
-  }
 }
