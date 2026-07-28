@@ -11,7 +11,8 @@ This document provides technical instructions for the Student Blogging API, incl
 1. Ensure Node.js (>= 24.12.0) is installed.
 2. Run `npm install` to download dependencies.
 3. Make sure a MongoDB instance is running locally on the port configured in `.env`.
-4. Run `npm run dev` to start the Fastify server in watch mode.
+4. Set `ANTHROPIC_API_KEY` in `.env` with a valid Anthropic API key ([console.anthropic.com](https://console.anthropic.com)) — required to generate lesson plans via Claude. `ANTHROPIC_MODEL` defaults to `claude-opus-5` if not set.
+5. Run `npm run dev` to start the Fastify server in watch mode.
 
 ### Docker Environment
 
@@ -104,3 +105,21 @@ The default local base URL is `http://localhost:3000`.
 - **Endpoint**: `GET /posts/search?q=blog`
 - **Headers**: `Authorization: Bearer <token>`
 - **Query Parameters**: `q` (Search query string)
+
+### 4. Lesson Plans (AI-generated)
+
+**Generate Lesson Plan**
+
+- **Endpoint**: `POST /lesson-plans/generate`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer <token>` (role `teacher` or `admin`)
+- **Body**:
+  ```json
+  {
+    "subject": "História",
+    "grade": "7º ano do Ensino Fundamental",
+    "theme": "Descobrimento do Brasil"
+  }
+  ```
+- **Description**: Generates a structured lesson plan (objectives, content, methodology, schedule, assessment, resources) using the Claude API and saves it for the requesting teacher. Requires `ANTHROPIC_API_KEY` to be configured — see [Local Environment](#local-environment).
